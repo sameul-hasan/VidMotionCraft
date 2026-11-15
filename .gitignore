@@ -6,7 +6,6 @@ engine/.hyperframes/
 *.pyc
 
 # Large Media & Generated Outputs
-Export/bd-pk-gdp-1971-2026.mp4
 Export/*.jpg
 Raw footage/
 Style Reference/
