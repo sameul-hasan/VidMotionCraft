@@ -1,0 +1,21 @@
+{
+  "name": "video-viral-engine",
+  "version": "1.0.0",
+  "private": true,
+  "description": "HyperFrames + FFmpeg + Edge TTS viral video engine",
+  "scripts": {
+    "preview": "hyperframes preview",
+    "render": "hyperframes render --output \"../Export/output.mp4\"",
+    "tts": ".venv/bin/python scripts/tts.py",
+    "whisper": ".venv/bin/python scripts/whisper_align.py",
+    "earshot": ".venv/bin/earshot",
+    "sfx:openverse": ".venv/bin/python scripts/openverse_sfx.py",
+    "sfx:pack": ".venv/bin/python scripts/real_sfx.py fetch-pack",
+    "sfx:cues": ".venv/bin/python scripts/real_sfx.py cues",
+    "download:raw": ".venv/bin/yt-dlp -f \"bv*+ba/b\" --merge-output-format mp4 -P \"../Raw footage\"",
+    "download:style": ".venv/bin/yt-dlp -f \"bv*+ba/b\" --merge-output-format mp4 -P \"../Style Reference\""
+  },
+  "dependencies": {
+    "hyperframes": "latest"
+  }
+}

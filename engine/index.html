@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920, initial-scale=1.0" />
+    <title>Antigravity $5 Student Offer — Gemini 4 Argon & Hydrogen</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&family=Playfair+Display:ital@0;1&display=swap");
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --bg-cream: #f7f4ee;
+        --ink-dark: #18181b;
+        --ink-muted: #a1a1aa;
+        --ink-soft: #71717a;
+        --accent-coral: #d95d39;
+        --accent-indigo: #4f46e5;
+        --accent-emerald: #059669;
+        --card-bg: #ffffff;
+        --card-border: rgba(24, 24, 27, 0.09);
+      }
+
+      body {
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: var(--bg-cream);
+        color: var(--ink-dark);
+        font-family: "Inter", system-ui, -apple-system, sans-serif;
+      }
+
+      #root {
+        position: relative;
+        width: 1080px;
+        height: 1920px;
+        background: radial-gradient(circle at 50% 25%, #ffffff 0%, #f5f1e8 60%, #ece7dc 100%);
+        overflow: hidden;
+        perspective: 1400px;
+      }
+
+      .bg-grid {
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(rgba(24, 24, 27, 0.08) 1.5px, transparent 1.5px);
+        background-size: 36px 36px;
+        opacity: 0.55;
+        pointer-events: none;
+      }
+
+      /* Top Kinetic Captions */
+      .captions-zone {
+        position: absolute;
+        top: 145px;
+        left: 72px;
+        right: 72px;
+        min-height: 185px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-content: center;
+        gap: 8px 14px;
+        text-align: center;
+        z-index: 30;
+      }
+
+      .cap-word {
+        font-size: 52px;
+        font-weight: 800;
+        letter-spacing: -0.025em;
+        line-height: 1.18;
+        color: #c4bfb6;
+        display: inline-block;
+      }
+
+      .cap-word.spoken {
+        color: #52525b;
+      }
+
+      .cap-word.active {
+        color: var(--ink-dark);
+      }
+
+      .cap-word.accent.active {
+        color: var(--accent-coral);
+      }
+
+      /* 3D Stage */
+      .stage-3d {
+        position: absolute;
+        top: 345px;
+        left: 60px;
+        right: 60px;
+        bottom: 320px;
+        transform-style: preserve-3d;
+        perspective: 1400px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .scene {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        transform-style: preserve-3d;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .card-3d {
+        background: var(--card-bg);
+        border: 1.5px solid var(--card-border);
+        border-radius: 32px;
+        box-shadow:
+          0 30px 70px -15px rgba(24, 24, 27, 0.14),
+          0 10px 25px -8px rgba(24, 24, 27, 0.06);
+        transform-style: preserve-3d;
+      }
+
+      .serif-italic {
+        font-family: "Playfair Display", Georgia, serif;
+        font-style: italic;
+        font-weight: 400;
+      }
+
+      .mono {
+        font-family: "JetBrains Mono", monospace;
+      }
+
+      /* SCENE 1: Price Comparison */
+      .s1-wrap {
+        display: flex;
+        gap: 32px;
+        align-items: center;
+        transform-style: preserve-3d;
+      }
+
+      .price-card {
+        width: 420px;
+        padding: 44px 36px;
+      }
+
+      .price-card.old {
+        background: #faf9f6;
+        opacity: 0.85;
+      }
+
+      .price-card.offer {
+        border: 2px solid var(--accent-coral);
+        box-shadow:
+          0 35px 80px -15px rgba(217, 93, 57, 0.22),
+          0 12px 30px -10px rgba(24, 24, 27, 0.1);
+      }
+
+      .pill {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 999px;
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        margin-bottom: 24px;
+      }
+
+      .pill.gray {
+        background: #f4f4f5;
+        color: #71717a;
+      }
+
+      .pill.coral {
+        background: rgba(217, 93, 57, 0.12);
+        color: var(--accent-coral);
+      }
+
+      .price-big {
+        font-size: 92px;
+        font-weight: 900;
+        letter-spacing: -0.04em;
+        line-height: 1;
+        margin-bottom: 12px;
+      }
+
+      .price-old-strike {
+        text-decoration: line-through;
+        color: #a1a1aa;
+      }
+
+      .price-sub {
+        font-size: 26px;
+        color: var(--ink-soft);
+        font-weight: 500;
+      }
+
+      /* SCENE 2: Antigravity + Gemini 4 Argon & Hydrogen */
+      .s2-hub {
+        width: 820px;
+        padding: 38px 42px;
+        margin-bottom: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .hub-left {
+        display: flex;
+        align-items: center;
+        gap: 22px;
+      }
+
+      .hub-icon {
+        width: 76px;
+        height: 76px;
+        border-radius: 22px;
+        background: linear-gradient(135deg, #18181b 0%, #3f3f46 100%);
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+        font-weight: 900;
+      }
+
+      .hub-title {
+        font-size: 38px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+
+      .hub-meta {
+        font-size: 23px;
+        color: var(--ink-soft);
+        margin-top: 4px;
+      }
+
+      .badge-active {
+        padding: 12px 22px;
+        border-radius: 999px;
+        background: rgba(5, 150, 105, 0.12);
+        color: var(--accent-emerald);
+        font-size: 22px;
+        font-weight: 700;
+      }
+
+      .s2-models {
+        display: flex;
+        gap: 32px;
+        width: 860px;
+        transform-style: preserve-3d;
+      }
+
+      .model-card {
+        flex: 1;
+        padding: 40px 34px;
+      }
+
+      .model-tag {
+        font-size: 20px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 16px;
+      }
+
+      .model-tag.argon {
+        color: var(--accent-indigo);
+      }
+
+      .model-tag.hydrogen {
+        color: var(--accent-coral);
+      }
+
+      .model-name {
+        font-size: 46px;
+        font-weight: 900;
+        letter-spacing: -0.03em;
+        line-height: 1.1;
+        margin-bottom: 16px;
+      }
+
+      .model-desc {
+        font-size: 24px;
+        line-height: 1.45;
+        color: var(--ink-soft);
+      }
+
+      /* SCENE 3: Dark Code Window + 3D Pills */
+      .s3-terminal {
+        width: 860px;
+        background: #141417;
+        color: #f4f4f5;
+        border-radius: 30px;
+        padding: 32px 38px 42px;
+        border: 1.5px solid rgba(255, 255, 255, 0.1);
+        box-shadow:
+          0 45px 90px -20px rgba(0, 0, 0, 0.35),
+          0 15px 35px -10px rgba(0, 0, 0, 0.2);
+        transform-style: preserve-3d;
+      }
+
+      .term-dots {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 28px;
+      }
+
+      .dot {
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+      }
+
+      .dot.r { background: #ef4444; }
+      .dot.y { background: #f59e0b; }
+      .dot.g { background: #10b981; }
+
+      .term-code {
+        font-size: 25px;
+        line-height: 1.65;
+        color: #d4d4d8;
+      }
+
+      .c-key { color: #93c5fd; }
+      .c-str { color: #fca5a5; }
+      .c-fn { color: #fcd34d; }
+
+      .s3-pills {
+        display: flex;
+        gap: 24px;
+        margin-top: 44px;
+        transform-style: preserve-3d;
+      }
+
+      .float-pill {
+        background: #ffffff;
+        border: 1.5px solid var(--card-border);
+        border-radius: 24px;
+        padding: 24px 32px;
+        box-shadow: 0 24px 50px -12px rgba(24, 24, 27, 0.16);
+        text-align: center;
+        min-width: 245px;
+      }
+
+      .float-pill-title {
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--ink-dark);
+        margin-bottom: 6px;
+      }
+
+      .float-pill-sub {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--accent-coral);
+      }
+
+      /* SCENE 4: 3D Stacked Reel Cards */
+      .s4-stack {
+        position: relative;
+        width: 820px;
+        height: 620px;
+        transform-style: preserve-3d;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .reel-layer {
+        position: absolute;
+        width: 390px;
+        height: 580px;
+        border-radius: 34px;
+        padding: 36px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .reel-layer.back {
+        background: #faf8f5;
+        border: 1.5px solid rgba(24, 24, 27, 0.12);
+      }
+
+      .reel-layer.mid {
+        background: #18181b;
+        color: #ffffff;
+      }
+
+      .reel-layer.front {
+        background: linear-gradient(155deg, #ffffff 0%, #fff7f4 100%);
+        border: 2px solid var(--accent-coral);
+      }
+
+      .layer-label {
+        font-size: 20px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        opacity: 0.7;
+      }
+
+      .layer-main {
+        font-size: 46px;
+        font-weight: 900;
+        line-height: 1.1;
+        letter-spacing: -0.03em;
+      }
+
+      .layer-foot {
+        font-size: 22px;
+        font-weight: 600;
+        color: var(--accent-coral);
+      }
+
+      /* SCENE 5: 3-Step Setup Roadmap */
+      .s5-steps {
+        width: 820px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        transform-style: preserve-3d;
+      }
+
+      .step-card {
+        padding: 34px 40px;
+        display: flex;
+        align-items: center;
+        gap: 28px;
+      }
+
+      .step-num {
+        width: 68px;
+        height: 68px;
+        border-radius: 20px;
+        background: rgba(217, 93, 57, 0.12);
+        color: var(--accent-coral);
+        font-size: 28px;
+        font-weight: 900;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .step-card-title {
+        font-size: 32px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+
+      .step-card-sub {
+        font-size: 22px;
+        color: var(--ink-soft);
+        margin-top: 4px;
+      }
+
+      /* SCENE 6: Comment CTA Hook */
+      .s6-cta {
+        width: 840px;
+        padding: 68px 56px;
+        text-align: center;
+      }
+
+      .cta-eyebrow {
+        font-size: 34px;
+        font-weight: 700;
+        color: var(--ink-soft);
+        margin-bottom: 18px;
+      }
+
+      .cta-keyword {
+        font-size: 86px;
+        font-weight: 900;
+        letter-spacing: -0.03em;
+        color: var(--accent-coral);
+        margin-bottom: 26px;
+      }
+
+      .cta-sub {
+        font-size: 32px;
+        font-weight: 600;
+        line-height: 1.4;
+        color: var(--ink-dark);
+        margin-bottom: 36px;
+      }
+
+      .cta-pill {
+        display: inline-block;
+        padding: 20px 44px;
+        border-radius: 999px;
+        background: var(--ink-dark);
+        color: #ffffff;
+        font-size: 26px;
+        font-weight: 700;
+      }
+
+      /* Bottom Zone */
+      .bottom-zone {
+        position: absolute;
+        bottom: 120px;
+        left: 72px;
+        right: 72px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+        z-index: 30;
+      }
+
+      .step-row {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .step-blocks {
+        display: flex;
+        gap: 10px;
+      }
+
+      .step-block {
+        width: 24px;
+        height: 24px;
+        border-radius: 6px;
+        border: 2px solid #d4d4d8;
+        background: transparent;
+      }
+
+      .step-block.done {
+        background: var(--ink-dark);
+        border-color: var(--ink-dark);
+      }
+
+      .step-block.current {
+        background: var(--accent-coral);
+        border-color: var(--accent-coral);
+      }
+
+      .step-label {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--ink-soft);
+        letter-spacing: 0.02em;
+      }
+
+      .watermark {
+        font-size: 26px;
+        font-weight: 600;
+        color: var(--ink-muted);
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="viral-short"
+      data-width="1080"
+      data-height="1920"
+      data-fps="30"
+      data-duration="38"
+    >
+      <div class="bg-grid"></div>
+      <audio id="voiceover-audio" src="assets/audio/voiceover.mp3" data-start="0"></audio>
+
+      <div id="captions" class="captions-zone"></div>
+
+      <div class="stage-3d">
+        <!-- SCENE 1: $20 vs $5 -->
+        <div id="scene-1" class="scene">
+          <div class="s1-wrap">
+            <div class="card-3d price-card old" id="s1-old">
+              <div class="pill gray">Standard AI</div>
+              <div class="price-big price-old-strike">$20</div>
+              <div class="price-sub">per month</div>
+            </div>
+            <div class="card-3d price-card offer" id="s1-offer">
+              <div class="pill coral">Student Offer</div>
+              <div class="price-big">$5</div>
+              <div class="price-sub">per month · Antigravity</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCENE 2: Gemini 4 Argon & Hydrogen -->
+        <div id="scene-2" class="scene">
+          <div class="card-3d s2-hub" id="s2-hub">
+            <div class="hub-left">
+              <div class="hub-icon">A</div>
+              <div>
+                <div class="hub-title">Antigravity</div>
+                <div class="hub-meta">$5 / mo Student Offer</div>
+              </div>
+            </div>
+            <div class="badge-active">Full Access</div>
+          </div>
+
+          <div class="s2-models">
+            <div class="card-3d model-card" id="s2-argon">
+              <div class="model-tag argon">Gemini 4</div>
+              <div class="model-name">Argon</div>
+              <div class="model-desc">Deep reasoning &amp; system architecture</div>
+            </div>
+            <div class="card-3d model-card" id="s2-hydrogen">
+              <div class="model-tag hydrogen">Gemini 4</div>
+              <div class="model-name">Hydrogen</div>
+              <div class="model-desc">Ultra-fast code &amp; rapid execution</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCENE 3: One Prompt -> 3D + Voice + Code -->
+        <div id="scene-3" class="scene">
+          <div class="s3-terminal" id="s3-term">
+            <div class="term-dots">
+              <div class="dot r"></div>
+              <div class="dot y"></div>
+              <div class="dot g"></div>
+            </div>
+            <pre class="term-code mono"><span class="c-key">prompt</span>: <span class="c-str">"Build a 3D viral reel"</span>
+<span class="c-key">models</span>: [<span class="c-str">"Gemini 4 Argon"</span>, <span class="c-str">"Hydrogen"</span>]
+<span class="c-fn">render</span>({
+  <span class="c-key">depth</span>: <span class="c-str">"perspective(1400px)"</span>,
+  <span class="c-key">voice</span>: <span class="c-str">"edge-tts"</span>,
+  <span class="c-key">export</span>: <span class="c-str">"1080x1920.mp4"</span>
+});</pre>
+          </div>
+
+          <div class="s3-pills">
+            <div class="float-pill" id="s3-p1">
+              <div class="float-pill-title">3D Motion</div>
+              <div class="float-pill-sub">HyperFrames</div>
+            </div>
+            <div class="float-pill" id="s3-p2">
+              <div class="float-pill-title">Voiceovers</div>
+              <div class="float-pill-sub">Natural TTS</div>
+            </div>
+            <div class="float-pill" id="s3-p3">
+              <div class="float-pill-title">Video Code</div>
+              <div class="float-pill-sub">FFmpeg</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCENE 4: 3D Stacked Reel Layers -->
+        <div id="scene-4" class="scene">
+          <div class="s4-stack">
+            <div class="card-3d reel-layer back" id="s4-back">
+              <div class="layer-label">Layer 01 · Idea</div>
+              <div class="layer-main serif-italic">Simple Prompt</div>
+              <div class="layer-foot">Gemini 4 Argon</div>
+            </div>
+            <div class="card-3d reel-layer mid" id="s4-mid">
+              <div class="layer-label">Layer 02 · Engine</div>
+              <div class="layer-main">3D Motion &amp; Audio</div>
+              <div class="layer-foot">HyperFrames + TTS</div>
+            </div>
+            <div class="card-3d reel-layer front" id="s4-front">
+              <div class="layer-label">Layer 03 · Output</div>
+              <div class="layer-main">Studio-Grade Reel</div>
+              <div class="layer-foot">Real 3D Depth</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCENE 5: 3-Step Setup -->
+        <div id="scene-5" class="scene">
+          <div class="s5-steps">
+            <div class="card-3d step-card" id="s5-c1">
+              <div class="step-num">01</div>
+              <div>
+                <div class="step-card-title">Claim the $5 Student Offer</div>
+                <div class="step-card-sub">Verify student status on Antigravity</div>
+              </div>
+            </div>
+            <div class="card-3d step-card" id="s5-c2">
+              <div class="step-num">02</div>
+              <div>
+                <div class="step-card-title">Select Gemini 4 Argon &amp; Hydrogen</div>
+                <div class="step-card-sub">Unlock both reasoning and speed models</div>
+              </div>
+            </div>
+            <div class="card-3d step-card" id="s5-c3">
+              <div class="step-num">03</div>
+              <div>
+                <div class="step-card-title">Build Your 3D Reel in 5 Mins</div>
+                <div class="step-card-sub">One prompt → 1080p export ready to post</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCENE 6: Comment CTA Hook -->
+        <div id="scene-6" class="scene">
+          <div class="card-3d s6-cta" id="s6-cta">
+            <div class="cta-eyebrow">Comment below</div>
+            <div class="cta-keyword">"ANTIGRAVITY"</div>
+            <div class="cta-sub">I'll send you the simple<br />step-by-step setup guide</div>
+            <div class="cta-pill">$5 Student Offer · 5-Min Setup</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom-zone">
+        <div class="step-row">
+          <div class="step-blocks" id="step-blocks">
+            <div class="step-block" data-step="0"></div>
+            <div class="step-block" data-step="1"></div>
+            <div class="step-block" data-step="2"></div>
+            <div class="step-block" data-step="3"></div>
+            <div class="step-block" data-step="4"></div>
+            <div class="step-block" data-step="5"></div>
+          </div>
+          <div class="step-label" id="step-label">STEP 01 / 06 · THE $5 OFFER</div>
+        </div>
+        <div class="watermark">@antigravity · ai creator workflow</div>
+      </div>
+    </div>
+
+    <script>
+      const WORDS = [
+        { w: "Most", s: 0.0841, e: 0.3846, g: 0 },
+        { w: "students", s: 0.3966, e: 0.8173, g: 0 },
+        { w: "are", s: 0.8293, e: 0.9495, g: 0 },
+        { w: "still", s: 0.9615, e: 1.238, g: 0 },
+        { w: "paying", s: 1.25, e: 1.5505, g: 0 },
+        { w: "$20/mo", s: 1.5625, e: 2.5721, g: 0, accent: true },
+        { w: "for", s: 2.5841, e: 2.8125, g: 0 },
+        { w: "AI,", s: 2.8245, e: 3.2812, g: 0 },
+
+        { w: "when", s: 3.5697, e: 3.75, g: 1 },
+        { w: "you", s: 3.762, e: 3.8461, g: 1 },
+        { w: "can", s: 3.8582, e: 4.0024, g: 1 },
+        { w: "unlock", s: 4.0144, e: 4.4231, g: 1 },
+        { w: "Antigravity", s: 4.4351, e: 5.0841, g: 1, accent: true },
+        { w: "for", s: 5.0962, e: 5.2524, g: 1 },
+        { w: "just", s: 5.2644, e: 5.4928, g: 1 },
+        { w: "$5.", s: 5.5048, e: 5.9495, g: 1, accent: true },
+
+        { w: "For", s: 6.3341, e: 6.4784, g: 2 },
+        { w: "$5,", s: 6.4904, e: 7.2236, g: 2, accent: true },
+        { w: "the", s: 7.2476, e: 7.3317, g: 2 },
+        { w: "Antigravity", s: 7.3438, e: 7.9087, g: 2, accent: true },
+        { w: "student", s: 7.9207, e: 8.2212, g: 2 },
+        { w: "offer", s: 8.2332, e: 8.5577, g: 2 },
+        { w: "gives", s: 8.5697, e: 8.75, g: 2 },
+        { w: "you", s: 8.762, e: 8.8702, g: 2 },
+        { w: "full", s: 8.8822, e: 9.1587, g: 2 },
+        { w: "access", s: 9.1707, e: 9.5913, g: 2 },
+
+        { w: "to", s: 9.6034, e: 9.7115, g: 3 },
+        { w: "Gemini", s: 9.7235, e: 10.1082, g: 3, accent: true },
+        { w: "4", s: 10.1202, e: 10.3486, g: 3, accent: true },
+        { w: "Argon", s: 10.3606, e: 10.7332, g: 3, accent: true },
+        { w: "for", s: 10.7452, e: 10.9135, g: 3 },
+        { w: "deep", s: 10.9255, e: 11.1539, g: 3 },
+        { w: "reasoning", s: 11.1659, e: 11.5625, g: 3 },
+        { w: "and", s: 11.5745, e: 11.6466, g: 3 },
+        { w: "architecture,", s: 11.6587, e: 12.3558, g: 3 },
+
+        { w: "plus", s: 12.6803, e: 12.9327, g: 4 },
+        { w: "Gemini", s: 12.9447, e: 13.3534, g: 4, accent: true },
+        { w: "4", s: 13.3654, e: 13.6058, g: 4, accent: true },
+        { w: "Hydrogen", s: 13.6178, e: 14.0865, g: 4, accent: true },
+        { w: "for", s: 14.0985, e: 14.2908, g: 4 },
+        { w: "ultra-fast", s: 14.3029, e: 14.8438, g: 4 },
+        { w: "code", s: 14.8558, e: 15.1322, g: 4 },
+        { w: "and", s: 15.1442, e: 15.2284, g: 4 },
+        { w: "execution.", s: 15.2404, e: 15.9014, g: 4 },
+
+        { w: "With", s: 16.2981, e: 16.4183, g: 5 },
+        { w: "one", s: 16.4303, e: 16.7067, g: 5 },
+        { w: "prompt", s: 16.7188, e: 17.0793, g: 5, accent: true },
+        { w: "inside", s: 17.0913, e: 17.4639, g: 5 },
+        { w: "Antigravity,", s: 17.476, e: 18.1971, g: 5, accent: true },
+
+        { w: "you", s: 18.2212, e: 18.3173, g: 6 },
+        { w: "can", s: 18.3293, e: 18.4615, g: 6 },
+        { w: "generate", s: 18.4735, e: 18.8822, g: 6 },
+        { w: "3D", s: 18.8942, e: 19.2428, g: 6, accent: true },
+        { w: "motion", s: 19.2548, e: 19.5913, g: 6 },
+        { w: "graphics,", s: 19.6034, e: 20.1923, g: 6 },
+        { w: "natural", s: 20.4808, e: 20.8293, g: 6 },
+        { w: "voiceovers,", s: 20.8413, e: 21.4904, g: 6 },
+        { w: "and", s: 21.5144, e: 21.7187, g: 6 },
+        { w: "complete", s: 21.7308, e: 22.1394, g: 6 },
+        { w: "video", s: 22.1515, e: 22.464, g: 6 },
+        { w: "code,", s: 22.476, e: 22.8726, g: 6 },
+
+        { w: "turning", s: 23.3774, e: 23.6659, g: 7 },
+        { w: "simple", s: 23.6779, e: 24.0144, g: 7 },
+        { w: "ideas", s: 24.0265, e: 24.4471, g: 7 },
+        { w: "into", s: 24.4591, e: 24.6995, g: 7 },
+        { w: "studio-grade", s: 24.7115, e: 25.3726, g: 7, accent: true },
+        { w: "reels", s: 25.3846, e: 25.7332, g: 7 },
+        { w: "with", s: 25.7452, e: 25.9375, g: 7 },
+        { w: "real", s: 25.9495, e: 26.1658, g: 7 },
+        { w: "depth.", s: 26.1779, e: 26.5865, g: 7, accent: true },
+
+        { w: "Want", s: 26.9832, e: 27.2476, g: 8 },
+        { w: "the", s: 27.2596, e: 27.3197, g: 8 },
+        { w: "exact", s: 27.3317, e: 27.7645, g: 8 },
+        { w: "step-by-step", s: 27.7765, e: 28.4375, g: 8, accent: true },
+        { w: "setup", s: 28.4495, e: 28.8101, g: 8 },
+        { w: "to", s: 28.8221, e: 28.9303, g: 8 },
+        { w: "claim", s: 28.9423, e: 29.3029, g: 8 },
+        { w: "the", s: 29.3149, e: 29.399, g: 8 },
+        { w: "$5", s: 29.411, e: 29.976, g: 8, accent: true },
+        { w: "offer", s: 29.988, e: 30.3967, g: 8 },
+
+        { w: "and", s: 30.4087, e: 30.5409, g: 9 },
+        { w: "build", s: 30.5529, e: 30.7812, g: 9 },
+        { w: "your", s: 30.7933, e: 30.9135, g: 9 },
+        { w: "first", s: 30.9255, e: 31.238, g: 9 },
+        { w: "3D", s: 31.25, e: 31.5505, g: 9, accent: true },
+        { w: "reel", s: 31.5625, e: 31.911, g: 9 },
+        { w: "in", s: 31.9231, e: 32.0553, g: 9 },
+        { w: "5", s: 32.0673, e: 32.3197, g: 9, accent: true },
+        { w: "minutes?", s: 32.3317, e: 32.7645, g: 9 },
+
+        { w: "Comment", s: 33.137, e: 33.5216, g: 10 },
+        { w: "Antigravity", s: 33.5337, e: 34.2428, g: 10, accent: true },
+        { w: "below,", s: 34.2548, e: 34.7235, g: 10 },
+        { w: "and", s: 35.012, e: 35.2163, g: 10 },
+        { w: "I'll", s: 35.2284, e: 35.3726, g: 10 },
+        { w: "send", s: 35.3846, e: 35.6851, g: 10 },
+        { w: "you", s: 35.6971, e: 35.8534, g: 10 },
+        { w: "the", s: 35.8654, e: 35.9615, g: 10 },
+        { w: "simple", s: 35.9735, e: 36.3341, g: 10, accent: true },
+        { w: "guide.", s: 36.3462, e: 36.7789, g: 10 },
+      ];
+
+      const STEP_LABELS = [
+        "STEP 01 / 06 · THE $5 OFFER",
+        "STEP 02 / 06 · GEMINI 4 ACCESS",
+        "STEP 03 / 06 · ONE PROMPT",
+        "STEP 04 / 06 · 3D DEPTH",
+        "STEP 05 / 06 · SIMPLE STEPS",
+        "STEP 06 / 06 · COMMENT NOW",
+      ];
+
+      const STEP_STARTS = [0, 6.2, 16.2, 23.2, 26.8, 33.0];
+
+      const captionsEl = document.getElementById("captions");
+      const stepLabelEl = document.getElementById("step-label");
+      const stepBlockEls = Array.from(document.querySelectorAll(".step-block"));
+
+      let lastGroup = -1;
+
+      function updateHUD(t) {
+        let activeWord = WORDS[0];
+        for (let i = 0; i < WORDS.length; i++) {
+          if (t >= WORDS[i].s) {
+            activeWord = WORDS[i];
+          }
+        }
+        const g = activeWord.g;
+        if (g !== lastGroup) {
+          lastGroup = g;
+          const groupWords = WORDS.filter((item) => item.g === g);
+          captionsEl.innerHTML = groupWords
+            .map(
+              (item, idx) =>
+                `<span class="cap-word ${item.accent ? "accent" : ""}" data-idx="${idx}">${item.w}</span>`
+            )
+            .join("");
+        }
+
+        const groupWords = WORDS.filter((item) => item.g === g);
+        const spans = captionsEl.children;
+        for (let i = 0; i < groupWords.length; i++) {
+          const item = groupWords[i];
+          const el = spans[i];
+          if (!el) continue;
+          const isCurrent = t >= item.s && t <= item.e + 0.12;
+          const isSpoken = t > item.e + 0.12;
+          el.classList.toggle("active", isCurrent);
+          el.classList.toggle("spoken", isSpoken);
+        }
+
+        let currentStep = 0;
+        for (let i = 0; i < STEP_STARTS.length; i++) {
+          if (t >= STEP_STARTS[i]) currentStep = i;
+        }
+        stepLabelEl.textContent = STEP_LABELS[currentStep];
+        stepBlockEls.forEach((el, idx) => {
+          el.classList.toggle("done", idx < currentStep);
+          el.classList.toggle("current", idx === currentStep);
+        });
+      }
+
+      const tl = gsap.timeline({
+        paused: true,
+        onUpdate: function () {
+          updateHUD(this.time());
+        },
+      });
+
+      // SCENE 1 (0.0s -> 6.2s)
+      tl.set("#scene-1", { opacity: 1 }, 0)
+        .fromTo(
+          "#s1-old",
+          { opacity: 0, x: -60, rotateY: 18, z: -80 },
+          { opacity: 0.85, x: 0, rotateY: 10, z: -20, duration: 0.65, ease: "power3.out" },
+          0.1
+        )
+        .fromTo(
+          "#s1-offer",
+          { opacity: 0, x: 60, rotateY: -22, z: -40, scale: 0.9 },
+          { opacity: 1, x: 0, rotateY: -8, z: 50, scale: 1.04, duration: 0.7, ease: "back.out(1.4)" },
+          3.9
+        )
+        .to("#s1-offer", { rotateY: -3, duration: 1.4, ease: "sine.inOut" }, 4.6)
+        .to("#scene-1", { opacity: 0, z: 120, duration: 0.35, ease: "power2.in" }, 5.9);
+
+      // SCENE 2 (6.2s -> 16.2s)
+      tl.set("#scene-2", { opacity: 1 }, 6.2)
+        .fromTo(
+          "#s2-hub",
+          { opacity: 0, y: 40, rotateX: 16, z: -60 },
+          { opacity: 1, y: 0, rotateX: 4, z: 20, duration: 0.65, ease: "power3.out" },
+          6.35
+        )
+        .fromTo(
+          "#s2-argon",
+          { opacity: 0, y: 60, rotateY: 22, z: -80 },
+          { opacity: 1, y: 0, rotateY: 10, z: 35, duration: 0.65, ease: "back.out(1.3)" },
+          9.6
+        )
+        .fromTo(
+          "#s2-hydrogen",
+          { opacity: 0, y: 60, rotateY: -22, z: -80 },
+          { opacity: 1, y: 0, rotateY: -10, z: 35, duration: 0.65, ease: "back.out(1.3)" },
+          12.7
+        )
+        .to("#s2-argon", { rotateY: 5, y: -6, duration: 1.8, ease: "sine.inOut" }, 13.4)
+        .to("#s2-hydrogen", { rotateY: -5, y: -6, duration: 1.8, ease: "sine.inOut" }, 13.5)
+        .to("#scene-2", { opacity: 0, scale: 0.94, z: -100, duration: 0.35, ease: "power2.in" }, 15.9);
+
+      // SCENE 3 (16.2s -> 23.2s)
+      tl.set("#scene-3", { opacity: 1 }, 16.2)
+        .fromTo(
+          "#s3-term",
+          { opacity: 0, rotateX: 18, rotateY: -12, z: -90, y: 50 },
+          { opacity: 1, rotateX: 7, rotateY: -4, z: 20, y: 0, duration: 0.7, ease: "power3.out" },
+          16.3
+        )
+        .fromTo(
+          "#s3-p1",
+          { opacity: 0, y: 40, z: -40, rotateX: 15 },
+          { opacity: 1, y: 0, z: 60, rotateX: 0, duration: 0.5, ease: "back.out(1.5)" },
+          18.9
+        )
+        .fromTo(
+          "#s3-p2",
+          { opacity: 0, y: 40, z: -40, rotateX: 15 },
+          { opacity: 1, y: 0, z: 60, rotateX: 0, duration: 0.5, ease: "back.out(1.5)" },
+          20.5
+        )
+        .fromTo(
+          "#s3-p3",
+          { opacity: 0, y: 40, z: -40, rotateX: 15 },
+          { opacity: 1, y: 0, z: 60, rotateX: 0, duration: 0.5, ease: "back.out(1.5)" },
+          21.7
+        )
+        .to("#scene-3", { opacity: 0, rotateY: 10, z: -80, duration: 0.35, ease: "power2.in" }, 22.9);
+
+      // SCENE 4 (23.2s -> 26.8s)
+      tl.set("#scene-4", { opacity: 1 }, 23.2)
+        .fromTo(
+          "#s4-back",
+          { opacity: 0, x: 0, z: -140, rotateY: 0 },
+          { opacity: 0.95, x: -240, z: -60, rotateY: 16, duration: 0.7, ease: "power3.out" },
+          23.3
+        )
+        .fromTo(
+          "#s4-mid",
+          { opacity: 0, x: 0, z: -80, rotateY: 0 },
+          { opacity: 1, x: 0, z: 10, rotateY: 0, duration: 0.7, ease: "power3.out" },
+          23.6
+        )
+        .fromTo(
+          "#s4-front",
+          { opacity: 0, x: 0, z: -20, rotateY: 0 },
+          { opacity: 1, x: 240, z: 90, rotateY: -16, duration: 0.75, ease: "back.out(1.3)" },
+          24.0
+        )
+        .to("#s4-front", { z: 120, rotateY: -10, duration: 1.5, ease: "sine.inOut" }, 24.9)
+        .to("#scene-4", { opacity: 0, scale: 0.94, duration: 0.35, ease: "power2.in" }, 26.5);
+
+      // SCENE 5 (26.8s -> 33.0s)
+      tl.set("#scene-5", { opacity: 1 }, 26.8)
+        .fromTo(
+          "#s5-c1",
+          { opacity: 0, y: 40, rotateX: 14, z: -40 },
+          { opacity: 1, y: 0, rotateX: 0, z: 20, duration: 0.55, ease: "power3.out" },
+          27.0
+        )
+        .fromTo(
+          "#s5-c2",
+          { opacity: 0, y: 40, rotateX: 14, z: -40 },
+          { opacity: 1, y: 0, rotateX: 0, z: 20, duration: 0.55, ease: "power3.out" },
+          28.8
+        )
+        .fromTo(
+          "#s5-c3",
+          { opacity: 0, y: 40, rotateX: 14, z: -40 },
+          { opacity: 1, y: 0, rotateX: 0, z: 30, duration: 0.55, ease: "back.out(1.3)" },
+          30.5
+        )
+        .to("#scene-5", { opacity: 0, scale: 0.95, z: -80, duration: 0.35, ease: "power2.in" }, 32.7);
+
+      // SCENE 6 (33.0s -> 38.0s)
+      tl.set("#scene-6", { opacity: 1 }, 33.0)
+        .fromTo(
+          "#s6-cta",
+          { opacity: 0, scale: 0.88, rotateX: 14, z: -60 },
+          { opacity: 1, scale: 1, rotateX: 0, z: 40, duration: 0.7, ease: "back.out(1.4)" },
+          33.1
+        )
+        .to("#s6-cta", { scale: 1.03, duration: 3.0, ease: "sine.inOut" }, 34.2)
+        .set({}, {}, 38.0);
+
+      updateHUD(0);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["viral-short"] = tl;
+    </script>
+  </body>
+</html>

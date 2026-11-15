@@ -1,0 +1,19 @@
+# Dependencies & Virtual Environments
+engine/node_modules/
+engine/.venv/
+engine/.hyperframes/
+**/__pycache__/
+*.pyc
+
+# Large Media & Generated Outputs
+Export/
+Raw footage/
+Style Reference/
+engine/assets/audio/*.mp3
+engine/assets/audio/*.wav
+engine/assets/audio/*.json
+engine/assets/video/
+
+# OS & Editor
+.DS_Store
+*.log

@@ -1,0 +1,10 @@
+omnivoice==0.2.1
+torch==2.15.0
+torchaudio==2.11.1
+transformers==5.22.2
+soundfile==0.14.0
+faster-whisper==1.2.1
+edge-tts==7.3.1
+yt-dlp==2026.10.26
+numpy==2.5.4
+scipy==1.18.1

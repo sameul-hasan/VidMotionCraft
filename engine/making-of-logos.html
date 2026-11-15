@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Video Making System — 3D Engine &amp; Logos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 1080px;
+      height: 1920px;
+      overflow: hidden;
+      background: #F7F5F0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #18181B;
+    }
+
+    #root {
+      position: relative;
+      width: 1080px;
+      height: 1920px;
+      background-color: #F7F5F0;
+      background-image: radial-gradient(#DDD7CA 1.8px, transparent 1.8px);
+      background-size: 32px 32px;
+      overflow: hidden;
+      perspective: 1400px;
+      transform-style: preserve-3d;
+    }
+
+    /* Ambient 3D floating background orbs */
+    .bg-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.45;
+      pointer-events: none;
+    }
+    .orb-1 { width: 520px; height: 520px; background: #FFEDD5; top: 180px; left: -120px; }
+    .orb-2 { width: 480px; height: 480px; background: #E0E7FF; bottom: 240px; right: -100px; }
+
+    /* Top Pill & Captions */
+    .top-bar {
+      position: absolute;
+      top: 90px;
+      left: 72px;
+      right: 72px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+      z-index: 40;
+    }
+    .eyebrow-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 22px;
+      border-radius: 999px;
+      background: #FFFFFF;
+      border: 1.5px solid #E7E2D8;
+      box-shadow: 0 8px 24px rgba(24, 24, 27, 0.06);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: #EA580C;
+    }
+    .eyebrow-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #EA580C;
+    }
+    .caption-box {
+      min-height: 148px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-content: center;
+      gap: 10px 14px;
+      text-align: center;
+      padding: 0 12px;
+    }
+    .cap-word {
+      font-size: 46px;
+      font-weight: 800;
+      line-height: 1.24;
+      color: #A1A1AA;
+    }
+    .cap-word.spoken { color: #27272A; }
+    .cap-word.active { color: #18181B; transform: scale(1.06); }
+    .cap-word.accent.active, .cap-word.accent.spoken { color: #EA580C; }
+
+    /* Main 3D Stage */
+    .stage {
+      position: absolute;
+      top: 390px;
+      left: 64px;
+      right: 64px;
+      bottom: 240px;
+      perspective: 1400px;
+      transform-style: preserve-3d;
+      z-index: 20;
+    }
+
+    .scene {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transform-style: preserve-3d;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* 3D Card Primitives */
+    .card-3d {
+      background: #FFFFFF;
+      border: 2px solid #EAE4D8;
+      border-radius: 32px;
+      box-shadow:
+        0 28px 60px -15px rgba(24, 24, 27, 0.14),
+        0 10px 24px -8px rgba(24, 24, 27, 0.08),
+        inset 0 2px 0 rgba(255, 255, 255, 0.9);
+      transform-style: preserve-3d;
+    }
+
+    .logo-tile {
+      width: 84px;
+      height: 84px;
+      border-radius: 22px;
+      background: #FAF8F4;
+      border: 1.5px solid #E6E0D4;
+      box-shadow: 0 10px 22px rgba(24, 24, 27, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 15px;
+      flex-shrink: 0;
+      transform: translateZ(24px);
+    }
+    .logo-tile img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+    .logo-tile.dark {
+      background: #18181B;
+      border-color: #27272A;
+    }
+
+    /* Scene 1: Folder + Hierarchy Connectors + 4 Tool Logo Cards */
+    .folder-card {
+      width: 820px;
+      padding: 34px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      align-items: center;
+    }
+    .folder-header {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .folder-glyph {
+      width: 56px;
+      height: 44px;
+      background: linear-gradient(135deg, #FB923C, #EA580C);
+      border-radius: 10px;
+      position: relative;
+      box-shadow: 0 8px 18px rgba(234, 88, 12, 0.25);
+    }
+    .folder-glyph::before {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: 0;
+      width: 26px;
+      height: 10px;
+      background: #FB923C;
+      border-radius: 6px 6px 0 0;
+    }
+    .folder-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 34px;
+      font-weight: 700;
+      color: #18181B;
+    }
+    .subfolders {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .pill-tag {
+      padding: 12px 22px;
+      border-radius: 14px;
+      background: #F5F2EB;
+      border: 1.5px solid #E5DFD3;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 21px;
+      font-weight: 700;
+      color: #3F3F46;
+    }
+
+    /* Tree Connector */
+    .tree-connectors {
+      width: 720px;
+      height: 54px;
+      position: relative;
+      margin: 4px 0;
+    }
+    .tree-stem {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 3px;
+      height: 26px;
+      background: #D6CFC2;
+      transform: translateX(-50%);
+    }
+    .tree-bar {
+      position: absolute;
+      top: 26px;
+      left: 160px;
+      right: 160px;
+      height: 3px;
+      background: #D6CFC2;
+    }
+    .tree-drop-l, .tree-drop-r {
+      position: absolute;
+      top: 26px;
+      width: 3px;
+      height: 28px;
+      background: #D6CFC2;
+    }
+    .tree-drop-l { left: 160px; }
+    .tree-drop-r { right: 160px; }
+
+    .tool-grid {
+      width: 880px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      transform-style: preserve-3d;
+    }
+    .tool-card {
+      padding: 26px 28px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .tool-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transform: translateZ(14px);
+    }
+    .tool-name {
+      font-size: 28px;
+      font-weight: 800;
+      color: #18181B;
+    }
+    .tool-role {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 18px;
+      font-weight: 700;
+      color: #EA580C;
+    }
+    .mini-logos {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .mini-logo-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #F4F1EA;
+      border: 1px solid #E5DFD3;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      font-weight: 700;
+      color: #52525B;
+    }
+    .mini-logo-chip img {
+      width: 16px;
+      height: 16px;
+      object-fit: contain;
+    }
+
+    /* Scene 2: Style Reference Analysis Cards */
+    .ref-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 36px;
+      width: 860px;
+      transform-style: preserve-3d;
+    }
+    .ref-card {
+      padding: 34px 38px;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+    .ref-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transform: translateZ(18px);
+    }
+    .ref-handle {
+      font-size: 30px;
+      font-weight: 800;
+      color: #18181B;
+    }
+    .ref-metrics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .metric-pill {
+      padding: 10px 18px;
+      border-radius: 12px;
+      background: #FAF8F4;
+      border: 1.5px solid #E6E0D4;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 20px;
+      font-weight: 700;
+      color: #27272A;
+    }
+    .metric-pill.hi {
+      background: #FFF7ED;
+      border-color: #FED7AA;
+      color: #C2410C;
+    }
+
+    /* Scene 3: Aayojon + Sami + Edge TTS Logo */
+    .aayojon-stage {
+      width: 880px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+      transform-style: preserve-3d;
+    }
+    .browser-card {
+      width: 860px;
+      padding: 20px;
+      overflow: hidden;
+    }
+    .browser-dots {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      padding: 0 8px;
+    }
+    .b-dot { width: 14px; height: 14px; border-radius: 50%; }
+    .b-url {
+      margin-left: 12px;
+      padding: 6px 18px;
+      border-radius: 999px;
+      background: #F4F1EA;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      color: #52525B;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .b-url img { width: 16px; height: 16px; }
+    .shot-img {
+      width: 100%;
+      border-radius: 18px;
+      border: 1.5px solid #E5DFD3;
+      display: block;
+    }
+    .sami-row {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      width: 860px;
+      transform-style: preserve-3d;
+    }
+    .sami-card {
+      flex: 1;
+      padding: 24px 30px;
+      display: flex;
+      align-items: center;
+      gap: 22px;
+    }
+    .sami-avatar {
+      width: 96px;
+      height: 96px;
+      border-radius: 26px;
+      background: linear-gradient(135deg, #FFF7ED, #FFEDD5);
+      border: 2px solid #FDBA74;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transform: translateZ(20px);
+    }
+
+    /* Scene 4: Terminal + Floating 3D Logo Orbit */
+    .terminal-wrap {
+      width: 880px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 32px;
+      transform-style: preserve-3d;
+    }
+    .term-card {
+      width: 860px;
+      background: #141417;
+      border: 2px solid #27272A;
+      border-radius: 30px;
+      padding: 36px 40px;
+      box-shadow: 0 36px 70px rgba(0, 0, 0, 0.28);
+      transform-style: preserve-3d;
+    }
+    .term-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .term-line {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 24px;
+      line-height: 1.7;
+      color: #E4E4E7;
+    }
+    .term-line .cmd { color: #FDBA74; font-weight: 700; }
+    .term-line .ok { color: #4ADE80; font-weight: 700; }
+    .sfx-orbit {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+      transform-style: preserve-3d;
+    }
+    .orbit-pill {
+      padding: 18px 26px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .orbit-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 22px;
+      font-weight: 700;
+      color: #18181B;
+    }
+
+    /* Scene 5: CTA Hero Card + 3D Logo Trio */
+    .cta-card {
+      width: 840px;
+      padding: 54px 48px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+      text-align: center;
+    }
+    .cta-logos {
+      display: flex;
+      gap: 22px;
+      transform: translateZ(28px);
+    }
+    .cta-title {
+      font-size: 52px;
+      font-weight: 800;
+      color: #18181B;
+      line-height: 1.15;
+    }
+    .cta-badge {
+      padding: 22px 48px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, #FB923C, #EA580C);
+      color: #FFFFFF;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 40px;
+      font-weight: 800;
+      box-shadow: 0 20px 40px rgba(234, 88, 12, 0.35);
+      transform: translateZ(36px);
+    }
+
+    /* Bottom 5-Step Progress Indicator (matches Reference 1) */
+    .bottom-bar {
+      position: absolute;
+      bottom: 96px;
+      left: 72px;
+      right: 72px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      z-index: 40;
+    }
+    .step-squares {
+      display: flex;
+      gap: 12px;
+    }
+    .step-sq {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: #E4DFD5;
+      border: 1.5px solid #D4CEC2;
+    }
+    .step-sq.done { background: #18181B; border-color: #18181B; }
+    .step-sq.active { background: #EA580C; border-color: #EA580C; }
+    .step-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #52525B;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"
+       data-composition-id="making-of-logos"
+       data-width="1080"
+       data-height="1920"
+       data-fps="30"
+       data-duration="40">
+
+    <!-- Audio + SFX -->
+    <audio id="vo-main" src="assets/audio/making_of.mp3" data-start="0.1" volume="1.0"></audio>
+    <audio id="sfx-pop-1" src="assets/sfx/pop.wav" data-start="3.89" volume="0.32"></audio>
+    <audio id="sfx-whoosh-2" src="assets/sfx/whoosh.wav" data-start="13.52" volume="0.30"></audio>
+    <audio id="sfx-whoosh-3" src="assets/sfx/whoosh.wav" data-start="18.55" volume="0.30"></audio>
+    <audio id="sfx-pop-4" src="assets/sfx/pop.wav" data-start="26.00" volume="0.34"></audio>
+    <audio id="sfx-whoosh-4" src="assets/sfx/whoosh.wav" data-start="30.50" volume="0.28"></audio>
+    <audio id="sfx-chime-5" src="assets/sfx/chime.wav" data-start="36.36" volume="0.38"></audio>
+
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+
+    <!-- Top Eyebrow & Word-Synced Captions -->
+    <div class="top-bar">
+      <div class="eyebrow-pill">
+        <span class="eyebrow-dot"></span>
+        <span>VIDEO MAKING SYSTEM · 3D ENGINE</span>
+      </div>
+      <div class="caption-box" id="caption-box"></div>
+    </div>
+
+    <!-- 3D Stage -->
+    <div class="stage">
+      <!-- SCENE 1: Folder + Hierarchy + 4 Logo Tool Cards -->
+      <div class="scene" id="scene-1">
+        <div class="card-3d folder-card" id="s1-folder">
+          <div class="folder-header">
+            <div class="folder-glyph"></div>
+            <div class="folder-title">video viral/</div>
+          </div>
+          <div class="subfolders">
+            <span class="pill-tag">Raw footage/</span>
+            <span class="pill-tag">Style Reference/</span>
+            <span class="pill-tag">Export/</span>
+          </div>
+        </div>
+
+        <div class="tree-connectors" id="s1-tree">
+          <div class="tree-stem"></div>
+          <div class="tree-bar"></div>
+          <div class="tree-drop-l"></div>
+          <div class="tree-drop-r"></div>
+        </div>
+
+        <div class="tool-grid" id="s1-grid">
+          <div class="card-3d tool-card" id="tc-hf">
+            <div class="logo-tile">
+              <img src="assets/logos/hyperframes-studio.png" alt="HyperFrames" />
+            </div>
+            <div class="tool-meta">
+              <div class="tool-name">HyperFrames</div>
+              <div class="tool-role">3D HTML RENDERER</div>
+              <div class="mini-logos">
+                <span class="mini-logo-chip"><img src="assets/logos/nodedotjs.svg" alt="Node" />Node 22</span>
+                <span class="mini-logo-chip"><img src="assets/logos/greensock.svg" alt="GSAP" />GSAP</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-3d tool-card" id="tc-ffmpeg">
+            <div class="logo-tile">
+              <img src="assets/logos/ffmpeg.svg" alt="FFmpeg" />
+            </div>
+            <div class="tool-meta">
+              <div class="tool-name">FFmpeg</div>
+              <div class="tool-role">SFX + MEDIA PROBE</div>
+              <div class="mini-logos">
+                <span class="mini-logo-chip">9.0.2 · lavfi</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-3d tool-card" id="tc-tts">
+            <div class="logo-tile">
+              <img src="assets/logos/edge.svg" alt="Edge TTS" />
+            </div>
+            <div class="tool-meta">
+              <div class="tool-name">Edge TTS</div>
+              <div class="tool-role">NEURAL VOICE + TIMING</div>
+              <div class="mini-logos">
+                <span class="mini-logo-chip"><img src="assets/logos/python.svg" alt="Python" />WordBoundary</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-3d tool-card" id="tc-ytdlp">
+            <div class="logo-tile dark">
+              <img src="assets/logos/yt-dlp.png" alt="yt-dlp" />
+            </div>
+            <div class="tool-meta">
+              <div class="tool-name">yt-dlp</div>
+              <div class="tool-role">REFERENCE FETCH</div>
+              <div class="mini-logos">
+                <span class="mini-logo-chip"><img src="assets/logos/instagram.svg" alt="IG" />Reels MP4</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCENE 2: Reference Analysis with Instagram Logos -->
+      <div class="scene" id="scene-2">
+        <div class="ref-stack">
+          <div class="card-3d ref-card" id="s2-ref1">
+            <div class="logo-tile">
+              <img src="assets/logos/instagram.svg" alt="Instagram" />
+            </div>
+            <div class="ref-body">
+              <div class="ref-handle">@aiwitheldorado · Style Ref 01</div>
+              <div class="ref-metrics">
+                <span class="metric-pill">0 cuts</span>
+                <span class="metric-pill hi">luma 225.1</span>
+                <span class="metric-pill hi">warmth +13.7</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-3d ref-card" id="s2-ref2">
+            <div class="logo-tile">
+              <img src="assets/logos/instagram.svg" alt="Instagram" />
+            </div>
+            <div class="ref-body">
+              <div class="ref-handle">@itsv0id.ai · Style Ref 02</div>
+              <div class="ref-metrics">
+                <span class="metric-pill hi">10 cuts</span>
+                <span class="metric-pill">luma 223.7</span>
+                <span class="metric-pill">bw_share 0.35</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCENE 3: Aayojon + Sami + Chrome & Edge Logos -->
+      <div class="scene" id="scene-3">
+        <div class="aayojon-stage">
+          <div class="card-3d browser-card" id="s3-browser">
+            <div class="browser-dots">
+              <span class="b-dot" style="background:#EF4444"></span>
+              <span class="b-dot" style="background:#F59E0B"></span>
+              <span class="b-dot" style="background:#22C55E"></span>
+              <span class="b-url">
+                <img src="assets/logos/googlechrome.svg" alt="Chrome" />
+                <span>aayojon.app/events</span>
+              </span>
+            </div>
+            <img class="shot-img" src="assets/aayojon/events.png" alt="Aayojon Events" />
+          </div>
+
+          <div class="sami-row" id="s3-sami-row">
+            <div class="card-3d sami-card">
+              <div class="sami-avatar">
+                <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                  <circle cx="32" cy="24" r="14" fill="#FDBA74" stroke="#18181B" stroke-width="3"/>
+                  <path d="M18 22C18 14 24 8 32 8C40 8 46 14 46 22C42 18 36 16 32 16C28 16 22 18 18 22Z" fill="#18181B"/>
+                  <circle cx="27" cy="25" r="2.2" fill="#18181B"/>
+                  <circle cx="37" cy="25" r="2.2" fill="#18181B"/>
+                  <path d="M27 31C29 33.5 35 33.5 37 31" stroke="#18181B" stroke-width="2.5" stroke-linecap="round"/>
+                  <path d="M14 56C14 44 22 39 32 39C42 39 50 44 50 56" fill="#EA580C" stroke="#18181B" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <div class="tool-meta">
+                <div class="tool-name">Sami (ছামি) · Host</div>
+                <div class="tool-role">AAYOJON PART 1</div>
+              </div>
+            </div>
+
+            <div class="card-3d sami-card" style="flex:0.85;">
+              <div class="logo-tile">
+                <img src="assets/logos/edge.svg" alt="Edge TTS" />
+              </div>
+              <div class="tool-meta">
+                <div class="tool-name">+8Hz TTS</div>
+                <div class="tool-role">PLAYFUL VOICE</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCENE 4: Terminal + 3D Logo Orbit (FFmpeg + Chrome + GitHub) -->
+      <div class="scene" id="scene-4">
+        <div class="terminal-wrap">
+          <div class="term-card" id="s4-term">
+            <div class="term-head">
+              <span class="b-dot" style="background:#EF4444"></span>
+              <span class="b-dot" style="background:#F59E0B"></span>
+              <span class="b-dot" style="background:#22C55E"></span>
+            </div>
+            <div class="term-line"><span class="cmd">$</span> ffmpeg -f lavfi -i aevalsrc=... sfx/*.wav</div>
+            <div class="term-line"><span class="cmd">$</span> hyperframes render -c aayojon-part1.html</div>
+            <div class="term-line"><span class="ok">✓ 1512 frames · 5 Chrome workers · 24.4s</span></div>
+            <div class="term-line"><span class="cmd">$</span> git push origin main</div>
+            <div class="term-line"><span class="ok">✓ cc8e6c8 → CARE-Engine.git</span></div>
+          </div>
+
+          <div class="sfx-orbit" id="s4-orbit">
+            <div class="card-3d orbit-pill">
+              <div class="logo-tile" style="width:60px;height:60px;padding:11px;border-radius:16px;">
+                <img src="assets/logos/ffmpeg.svg" alt="FFmpeg" />
+              </div>
+              <span class="orbit-label">whoosh · pop · chime</span>
+            </div>
+            <div class="card-3d orbit-pill">
+              <div class="logo-tile" style="width:60px;height:60px;padding:11px;border-radius:16px;">
+                <img src="assets/logos/googlechrome.svg" alt="Chrome" />
+              </div>
+              <span class="orbit-label">1080×1920 3D</span>
+            </div>
+            <div class="card-3d orbit-pill">
+              <div class="logo-tile" style="width:60px;height:60px;padding:11px;border-radius:16px;">
+                <img src="assets/logos/github.svg" alt="GitHub" />
+              </div>
+              <span class="orbit-label">origin/main</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCENE 5: CTA Hero with Logo Trio -->
+      <div class="scene" id="scene-5">
+        <div class="card-3d cta-card" id="s5-cta">
+          <div class="cta-logos">
+            <div class="logo-tile"><img src="assets/logos/hyperframes-studio.png" alt="HyperFrames" /></div>
+            <div class="logo-tile"><img src="assets/logos/ffmpeg.svg" alt="FFmpeg" /></div>
+            <div class="logo-tile"><img src="assets/logos/edge.svg" alt="Edge TTS" /></div>
+            <div class="logo-tile"><img src="assets/logos/github.svg" alt="GitHub" /></div>
+          </div>
+          <div class="cta-title">Want the full video<br/>making system?</div>
+          <div class="cta-badge">Comment "ENGINE"</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom 5-Step Progress Indicator -->
+    <div class="bottom-bar">
+      <div class="step-squares" id="step-squares">
+        <span class="step-sq active"></span>
+        <span class="step-sq"></span>
+        <span class="step-sq"></span>
+        <span class="step-sq"></span>
+        <span class="step-sq"></span>
+      </div>
+      <div class="step-label" id="step-label">STEP 01 / 05 · ENGINE SETUP</div>
+    </div>
+  </div>
+
+  <script>
+    const WORDS = [{"w": "How", "s": 0.0, "e": 0.26, "g": 0}, {"w": "did", "s": 0.26, "e": 0.36, "g": 0}, {"w": "we", "s": 0.36, "e": 0.5, "g": 0}, {"w": "build", "s": 0.5, "e": 0.76, "g": 0}, {"w": "a", "s": 0.76, "e": 0.92, "g": 0}, {"w": "full", "s": 0.92, "e": 1.1, "g": 0}, {"w": "3D", "s": 1.1, "e": 1.48, "g": 0, "accent": true}, {"w": "viral", "s": 1.48, "e": 1.76, "g": 1, "accent": true}, {"w": "video", "s": 1.76, "e": 2.04, "g": 1}, {"w": "engine", "s": 2.04, "e": 2.46, "g": 1, "accent": true}, {"w": "inside", "s": 2.46, "e": 2.9, "g": 1}, {"w": "one chat?", "s": 2.9, "e": 3.38, "g": 1}, {"w": "First,", "s": 3.9, "e": 4.16, "g": 1}, {"w": "we", "s": 4.38, "e": 4.46, "g": 1}, {"w": "created", "s": 4.46, "e": 4.74, "g": 2}, {"w": "three", "s": 4.74, "e": 5.0, "g": 2}, {"w": "folders,", "s": 5.0, "e": 5.32, "g": 2}, {"w": "raw", "s": 5.62, "e": 5.72, "g": 2}, {"w": "footage,", "s": 5.72, "e": 6.06, "g": 2}, {"w": "style", "s": 6.46, "e": 6.82, "g": 2}, {"w": "reference", "s": 6.82, "e": 7.2, "g": 2}, {"w": "and", "s": 7.2, "e": 7.48, "g": 3}, {"w": "export,", "s": 7.48, "e": 7.88, "g": 3}, {"w": "and", "s": 8.44, "e": 8.58, "g": 3}, {"w": "installed", "s": 8.58, "e": 8.9, "g": 3}, {"w": "HyperFrames,", "s": 8.9, "e": 9.56, "g": 3, "accent": true}, {"w": "FFmpeg,", "s": 10.0, "e": 10.68, "g": 3, "accent": true}, {"w": "Edge", "s": 11.24, "e": 11.46, "g": 3, "accent": true}, {"w": "TTS,", "s": 11.46, "e": 11.86, "g": 4, "accent": true}, {"w": "and", "s": 12.2, "e": 12.24, "g": 4}, {"w": "yt-dlp.", "s": 12.24, "e": 12.98, "g": 4, "accent": true}, {"w": "Next,", "s": 13.56, "e": 13.78, "g": 4}, {"w": "we", "s": 14.0, "e": 14.08, "g": 4}, {"w": "downloaded", "s": 14.08, "e": 14.46, "g": 4}, {"w": "two", "s": 14.46, "e": 14.72, "g": 4}, {"w": "viral", "s": 14.72, "e": 14.98, "g": 5, "accent": true}, {"w": "reels", "s": 14.98, "e": 15.38, "g": 5, "accent": true}, {"w": "and", "s": 15.38, "e": 15.62, "g": 5}, {"w": "analyzed", "s": 15.62, "e": 15.96, "g": 5}, {"w": "their", "s": 15.96, "e": 16.26, "g": 5}, {"w": "exact", "s": 16.26, "e": 16.56, "g": 5}, {"w": "cuts,", "s": 16.56, "e": 16.9, "g": 5}, {"w": "color,", "s": 17.22, "e": 17.48, "g": 6}, {"w": "and", "s": 17.7, "e": 17.76, "g": 6}, {"w": "layout.", "s": 17.76, "e": 18.02, "g": 6}, {"w": "Then", "s": 18.56, "e": 18.7, "g": 6}, {"w": "we", "s": 18.7, "e": 18.84, "g": 6}, {"w": "staged", "s": 18.84, "e": 19.12, "g": 6}, {"w": "real", "s": 19.12, "e": 19.5, "g": 6}, {"w": "Aayojon", "s": 19.5, "e": 20.02, "g": 7, "accent": true}, {"w": "screenshots,", "s": 20.02, "e": 20.4, "g": 7}, {"w": "built", "s": 21.1, "e": 21.3, "g": 7}, {"w": "an", "s": 21.3, "e": 21.46, "g": 7}, {"w": "animated", "s": 21.46, "e": 21.72, "g": 7}, {"w": "host", "s": 21.72, "e": 22.06, "g": 7}, {"w": "named", "s": 22.06, "e": 22.3, "g": 7}, {"w": "Sami,", "s": 22.3, "e": 22.7, "g": 8, "accent": true}, {"w": "and", "s": 23.16, "e": 23.32, "g": 8}, {"w": "tuned", "s": 23.32, "e": 23.5, "g": 8}, {"w": "a", "s": 23.5, "e": 23.66, "g": 8}, {"w": "playful", "s": 23.66, "e": 23.9, "g": 8}, {"w": "voice", "s": 23.9, "e": 24.24, "g": 8}, {"w": "with", "s": 24.24, "e": 24.48, "g": 8}, {"w": "word", "s": 24.48, "e": 24.68, "g": 9}, {"w": "-level", "s": 24.68, "e": 24.86, "g": 9}, {"w": "timestamps.", "s": 24.86, "e": 25.42, "g": 9, "accent": true}, {"w": "We", "s": 25.42, "e": 26.0, "g": 9}, {"w": "synthesized", "s": 26.0, "e": 26.58, "g": 9}, {"w": "custom", "s": 26.58, "e": 26.86, "g": 9}, {"w": "whoosh,", "s": 26.86, "e": 27.26, "g": 9, "accent": true}, {"w": "pop,", "s": 27.6, "e": 27.88, "g": 10, "accent": true}, {"w": "and", "s": 28.4, "e": 28.46, "g": 10}, {"w": "chime", "s": 28.46, "e": 28.7, "g": 10, "accent": true}, {"w": "sound", "s": 28.7, "e": 28.94, "g": 10}, {"w": "effects", "s": 28.94, "e": 29.24, "g": 10}, {"w": "in", "s": 29.24, "e": 29.5, "g": 10}, {"w": "FFmpeg,", "s": 29.5, "e": 30.26, "g": 10, "accent": true}, {"w": "rendered", "s": 30.74, "e": 31.02, "g": 11}, {"w": "1", "s": 31.02, "e": 31.34, "g": 11}, {"w": ",500", "s": 31.34, "e": 32.18, "g": 11}, {"w": "frames", "s": 32.18, "e": 32.54, "g": 11}, {"w": "in", "s": 32.54, "e": 32.8, "g": 11}, {"w": "3D,", "s": 32.8, "e": 33.24, "g": 11, "accent": true}, {"w": "and", "s": 33.82, "e": 33.88, "g": 11}, {"w": "pushed", "s": 33.88, "e": 34.12, "g": 12}, {"w": "the", "s": 34.12, "e": 34.28, "g": 12}, {"w": "finished", "s": 34.28, "e": 34.54, "g": 12}, {"w": "MP4", "s": 34.54, "e": 35.18, "g": 12}, {"w": "straight", "s": 35.18, "e": 35.44, "g": 12}, {"w": "to", "s": 35.44, "e": 35.68, "g": 12}, {"w": "GitHub.", "s": 35.68, "e": 35.96, "g": 12, "accent": true}, {"w": "Comment", "s": 36.36, "e": 36.62, "g": 13}, {"w": "\"ENGINE\"", "s": 36.62, "e": 37.0, "g": 13, "accent": true}, {"w": "below", "s": 37.0, "e": 37.34, "g": 13}, {"w": "if", "s": 37.34, "e": 37.72, "g": 13}, {"w": "you", "s": 37.72, "e": 37.84, "g": 13}, {"w": "want", "s": 37.84, "e": 38.02, "g": 13}, {"w": "this", "s": 38.02, "e": 38.22, "g": 13}, {"w": "exact", "s": 38.22, "e": 38.56, "g": 14}, {"w": "setup.", "s": 38.56, "e": 38.9, "g": 14}];
+
+    const STEP_LABELS = [
+      "STEP 01 / 05 · ENGINE SETUP",
+      "STEP 02 / 05 · STYLE REFERENCES",
+      "STEP 03 / 05 · SAMI + AAYOJON",
+      "STEP 04 / 05 · SFX + RENDER + GIT",
+      "STEP 05 / 05 · GET THE ENGINE"
+    ];
+
+    const SCENE_WINDOWS = [
+      { id: "scene-1", start: 0.0, end: 13.5 },
+      { id: "scene-2", start: 13.5, end: 18.55 },
+      { id: "scene-3", start: 18.55, end: 26.0 },
+      { id: "scene-4", start: 26.0, end: 36.2 },
+      { id: "scene-5", start: 36.2, end: 40.1 }
+    ];
+
+    // Build GSAP deterministic master timeline
+    const tl = gsap.timeline({ paused: true });
+    window.__timelines = window.__timelines || {};
+    window.__timelines["making-of-logos"] = tl;
+
+    // Scene 1 (0s - 13.5s): 3D tilt entrance + hierarchy tree + 4 logo cards
+    tl.set("#scene-1", { opacity: 1 }, 0)
+      .fromTo("#s1-folder",
+        { opacity: 0, y: 60, rotationX: 28, rotationY: -12, scale: 0.88 },
+        { opacity: 1, y: 0, rotationX: 6, rotationY: -4, scale: 1, duration: 0.7, ease: "back.out(1.4)" }, 0.1)
+      .fromTo("#s1-tree",
+        { opacity: 0, scaleY: 0 },
+        { opacity: 1, scaleY: 1, duration: 0.45, ease: "power2.out" }, 3.85)
+      .fromTo("#tc-hf",
+        { opacity: 0, y: 50, rotationX: 25, rotationY: -16, z: -80 },
+        { opacity: 1, y: 0, rotationX: 5, rotationY: -5, z: 20, duration: 0.55, ease: "back.out(1.5)" }, 4.2)
+      .fromTo("#tc-ffmpeg",
+        { opacity: 0, y: 50, rotationX: 25, rotationY: 16, z: -80 },
+        { opacity: 1, y: 0, rotationX: 5, rotationY: 5, z: 20, duration: 0.55, ease: "back.out(1.5)" }, 5.0)
+      .fromTo("#tc-tts",
+        { opacity: 0, y: 50, rotationX: 25, rotationY: -16, z: -80 },
+        { opacity: 1, y: 0, rotationX: -4, rotationY: -5, z: 20, duration: 0.55, ease: "back.out(1.5)" }, 5.8)
+      .fromTo("#tc-ytdlp",
+        { opacity: 0, y: 50, rotationX: 25, rotationY: 16, z: -80 },
+        { opacity: 1, y: 0, rotationX: -4, rotationY: 5, z: 20, duration: 0.55, ease: "back.out(1.5)" }, 6.6)
+      .to("#scene-1", { opacity: 0, rotationX: -12, y: -40, duration: 0.35 }, 13.2);
+
+    // Scene 2 (13.5s - 18.55s): 3D tilted Instagram reference cards
+    tl.set("#scene-2", { opacity: 1 }, 13.5)
+      .fromTo("#s2-ref1",
+        { opacity: 0, x: -120, rotationY: -25, rotationX: 12 },
+        { opacity: 1, x: 0, rotationY: -6, rotationX: 4, duration: 0.65, ease: "back.out(1.4)" }, 13.55)
+      .fromTo("#s2-ref2",
+        { opacity: 0, x: 120, rotationY: 25, rotationX: 12 },
+        { opacity: 1, x: 0, rotationY: 6, rotationX: -4, duration: 0.65, ease: "back.out(1.4)" }, 14.3)
+      .to("#scene-2", { opacity: 0, scale: 0.92, duration: 0.35 }, 18.25);
+
+    // Scene 3 (18.55s - 26.0s): Browser screenshot + Sami + Edge TTS card
+    tl.set("#scene-3", { opacity: 1 }, 18.55)
+      .fromTo("#s3-browser",
+        { opacity: 0, y: 70, rotationX: 22, rotationY: -10, scale: 0.9 },
+        { opacity: 1, y: 0, rotationX: 6, rotationY: -4, scale: 1, duration: 0.7, ease: "back.out(1.4)" }, 18.6)
+      .fromTo("#s3-sami-row",
+        { opacity: 0, y: 60, rotationX: -18 },
+        { opacity: 1, y: 0, rotationX: 4, duration: 0.65, ease: "back.out(1.4)" }, 19.6)
+      .to("#scene-3", { opacity: 0, rotationY: 14, duration: 0.35 }, 25.7);
+
+    // Scene 4 (26.0s - 36.2s): Dark 3D Terminal + Logo Orbit
+    tl.set("#scene-4", { opacity: 1 }, 26.0)
+      .fromTo("#s4-term",
+        { opacity: 0, y: 70, rotationX: 24, rotationY: 12 },
+        { opacity: 1, y: 0, rotationX: 7, rotationY: -4, duration: 0.7, ease: "back.out(1.4)" }, 26.05)
+      .fromTo("#s4-orbit .orbit-pill",
+        { opacity: 0, y: 40, scale: 0.85, rotationX: 20 },
+        { opacity: 1, y: 0, scale: 1, rotationX: 4, duration: 0.5, stagger: 0.45, ease: "back.out(1.5)" }, 27.2)
+      .to("#scene-4", { opacity: 0, scale: 0.92, duration: 0.35 }, 35.9);
+
+    // Scene 5 (36.2s - 40.0s): CTA Hero Card
+    tl.set("#scene-5", { opacity: 1 }, 36.2)
+      .fromTo("#s5-cta",
+        { opacity: 0, scale: 0.84, rotationX: 20, y: 50 },
+        { opacity: 1, scale: 1, rotationX: 4, y: 0, duration: 0.65, ease: "back.out(1.6)" }, 36.25);
+
+    const captionBox = document.getElementById("caption-box");
+    const stepSquares = document.querySelectorAll("#step-squares .step-sq");
+    const stepLabel = document.getElementById("step-label");
+
+    function syncOverlays(t) {
+      // Update step progress indicator
+      let activeIdx = 0;
+      for (let i = 0; i < SCENE_WINDOWS.length; i++) {
+        if (t >= SCENE_WINDOWS[i].start) activeIdx = i;
+      }
+      stepSquares.forEach((sq, idx) => {
+        sq.className = "step-sq" + (idx < activeIdx ? " done" : idx === activeIdx ? " active" : "");
+      });
+      stepLabel.textContent = STEP_LABELS[activeIdx];
+
+      // Update word-synced captions (7-word groups)
+      const adjustedT = Math.max(0, t - 0.1);
+      let curWord = WORDS.find(w => adjustedT >= w.s && adjustedT <= w.e);
+      if (!curWord) {
+        const past = WORDS.filter(w => adjustedT >= w.s);
+        curWord = past.length ? past[past.length - 1] : WORDS[0];
+      }
+      if (curWord) {
+        const groupWords = WORDS.filter(w => w.g === curWord.g);
+        captionBox.innerHTML = groupWords.map(w => {
+          const isActive = adjustedT >= w.s && adjustedT <= w.e;
+          const isSpoken = adjustedT > w.e;
+          const cls = [
+            "cap-word",
+            w.accent ? "accent" : "",
+            isActive ? "active" : "",
+            isSpoken ? "spoken" : ""
+          ].filter(Boolean).join(" ");
+          return `<span class="${cls}">${w.w}</span>`;
+        }).join("");
+      }
+    }
+
+    tl.eventCallback("onUpdate", () => {
+      syncOverlays(tl.time());
+    });
+
+    window.__hf = {
+      seek: (t) => {
+        tl.seek(t, false);
+        syncOverlays(t);
+      },
+      getDuration: () => 40
+    };
+    syncOverlays(0);
+  </script>
+</body>
+</html>

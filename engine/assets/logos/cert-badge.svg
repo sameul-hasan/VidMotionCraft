@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 280" width="280" height="280">
+  <defs>
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF9900" />
+      <stop offset="100%" stop-color="#EA580C" />
+    </linearGradient>
+  </defs>
+  <!-- Outer Pentagon Shield -->
+  <polygon points="140,20 250,60 250,190 140,260 30,190 30,60" fill="#0F172A" stroke="url(#shieldGrad)" stroke-width="8"/>
+  <polygon points="140,38 234,72 234,182 140,242 46,182 46,72" fill="#1E293B"/>
+  <!-- Inner Text -->
+  <text x="140" y="95" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="20" font-weight="900" fill="#FF9900" text-anchor="middle" letter-spacing="2">AWS CERTIFIED</text>
+  <line x1="60" y1="110" x2="220" y2="110" stroke="#FF9900" stroke-width="2"/>
+  <text x="140" y="145" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="24" font-weight="900" fill="#FFFFFF" text-anchor="middle">CLOUD</text>
+  <text x="140" y="175" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="22" font-weight="800" fill="#38BDF8" text-anchor="middle">PRACTITIONER</text>
+  <text x="140" y="215" font-family="monospace" font-size="14" font-weight="700" fill="#94A3B8" text-anchor="middle">STUDENT ROADMAP</text>
+</svg>

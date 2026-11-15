@@ -1,0 +1,47 @@
+{
+  "whoosh.wav": {
+    "title": "Deep Whoosh #1",
+    "creator": "Kinoton",
+    "license": "cc0",
+    "license_version": "1.0",
+    "source": "freesound",
+    "foreign_landing_url": "https://freesound.org/people/Kinoton/sounds/351256",
+    "url": "https://cdn.freesound.org/previews/351/351256_2247456-hq.mp3"
+  },
+  "pop.wav": {
+    "title": "Pop, High, A (H1).wav",
+    "creator": "InspectorJ",
+    "license": "by",
+    "license_version": "4.0",
+    "source": "freesound",
+    "foreign_landing_url": "https://freesound.org/people/InspectorJ/sounds/411642",
+    "url": "https://cdn.freesound.org/previews/411/411642_5121236-hq.mp3"
+  },
+  "chime.wav": {
+    "title": "Ambience, Wind Chimes, A.wav",
+    "creator": "InspectorJ",
+    "license": "by",
+    "license_version": "4.0",
+    "source": "freesound",
+    "foreign_landing_url": "https://freesound.org/people/InspectorJ/sounds/353501",
+    "url": "https://cdn.freesound.org/previews/353/353501_5121236-hq.mp3"
+  },
+  "click.wav": {
+    "title": "Mouse click sounds",
+    "creator": "Masgame",
+    "license": "cc0",
+    "license_version": "1.0",
+    "source": "freesound",
+    "foreign_landing_url": "https://freesound.org/people/Masgame/sounds/347544",
+    "url": "https://cdn.freesound.org/previews/347/347544_5662401-hq.mp3"
+  },
+  "riser.wav": {
+    "title": "impact riser 01",
+    "creator": "soramoosic",
+    "license": "cc0",
+    "license_version": "1.0",
+    "source": "freesound",
+    "foreign_landing_url": "https://freesound.org/people/soramoosic/sounds/244249",
+    "url": "https://cdn.freesound.org/previews/244/244249_3986112-hq.mp3"
+  }
+}

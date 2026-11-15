@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 180" width="420" height="180">
+  <defs>
+    <linearGradient id="meetupGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF9900" />
+      <stop offset="100%" stop-color="#FF5500" />
+    </linearGradient>
+  </defs>
+  <rect x="5" y="5" width="410" height="170" rx="24" fill="#0F172A" stroke="#FF9900" stroke-width="3"/>
+  <rect x="25" y="22" width="120" height="26" rx="13" fill="url(#meetupGrad)"/>
+  <text x="85" y="39" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="12" font-weight="900" fill="#000000" text-anchor="middle" letter-spacing="1">NEXT MEETUP</text>
+  <text x="25" y="80" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="28" font-weight="900" fill="#FFFFFF">DAFFODIL CAMPUS</text>
+  <text x="25" y="115" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="18" font-weight="700" fill="#38BDF8">Hands-On Cloud Workshop</text>
+  <!-- Comment Pill CTA -->
+  <g transform="translate(25, 130)">
+    <rect width="250" height="32" rx="16" fill="#1E293B" stroke="#64748B" stroke-width="1.5"/>
+    <text x="20" y="21" font-family="monospace" font-size="13" font-weight="800" fill="#FF9900">💬 LINK IN COMMENTS</text>
+  </g>
+</svg>

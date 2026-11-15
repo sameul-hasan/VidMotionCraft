@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8" />
+<title>aws-sbg-diu-rafi-bn</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800;900&family=JetBrains+Mono:wght@600;700;800&family=Noto+Sans+Bengali:wght@600;700;800;900&display=swap" rel="stylesheet" />
+<script src="assets/js/gsap.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 1080px;
+    height: 1920px;
+    overflow: hidden;
+    background: #F7F5F0;
+    font-family: 'Inter', 'Noto Sans Bengali', -apple-system, sans-serif;
+    color: #18181B;
+  }
+  .stage {
+    position: relative;
+    width: 1080px;
+    height: 1920px;
+    background: radial-gradient(circle at 18% 10%, #ECFDF5 0%, #F7F5F0 50%, #FFF7ED 100%);
+    overflow: hidden;
+    perspective: 1400px;
+    transform-style: preserve-3d;
+  }
+  .tech-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(24, 24, 27, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(24, 24, 27, 0.05) 1px, transparent 1px);
+    background-size: 64px 64px;
+    pointer-events: none;
+  }
+  .glow-1 {
+    position: absolute; width: 540px; height: 540px; border-radius: 999px;
+    background: #34D399; opacity: 0.24; filter: blur(95px);
+    top: -110px; right: -110px; pointer-events: none;
+  }
+  .glow-2 {
+    position: absolute; width: 500px; height: 500px; border-radius: 999px;
+    background: #FDBA74; opacity: 0.30; filter: blur(95px);
+    bottom: 200px; left: -120px; pointer-events: none;
+  }
+  .px-block {
+    position: absolute;
+    background: rgba(22, 163, 74, 0.16);
+    border: 2px solid #16A34A;
+    pointer-events: none;
+  }
+  .px-1 { width: 54px; height: 54px; top: 210px; right: 86px; }
+  .px-2 { width: 32px; height: 32px; top: 278px; right: 150px; background: rgba(234, 88, 12, 0.18); border-color: #EA580C; }
+  .px-3 { width: 44px; height: 44px; bottom: 420px; left: 72px; }
+
+  .header {
+    position: absolute;
+    top: 62px; left: 56px; right: 56px;
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 30;
+  }
+  .brand-left { display: flex; align-items: center; gap: 16px; }
+  .sbg-logo-hdr {
+    width: 68px; height: 68px; border-radius: 16px;
+    border: 2.5px solid #18181B;
+    box-shadow: 0 6px 0 #18181B;
+    object-fit: cover;
+  }
+  .brand-name { font-size: 26px; font-weight: 900; letter-spacing: 0.02em; color: #18181B; }
+  .brand-sub { font-size: 16px; font-weight: 800; color: #16A34A; letter-spacing: 0.08em; }
+  .tag-pill {
+    padding: 12px 22px; border-radius: 999px;
+    background: #FFFFFF;
+    border: 2.5px solid #18181B;
+    box-shadow: 0 5px 0 #18181B;
+    color: #18181B; font-size: 17px; font-weight: 900; letter-spacing: 0.05em;
+  }
+
+  .speaker-wrap {
+    position: absolute; top: 152px; left: 56px; z-index: 30;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .speaker-pill {
+    padding: 9px 20px; border-radius: 999px;
+    background: #ECFDF5;
+    border: 2px solid #16A34A;
+    color: #15803D; font-size: 17px; font-weight: 800; letter-spacing: 0.06em;
+  }
+
+  .scene {
+    position: absolute;
+    top: 225px; left: 56px; right: 56px; bottom: 430px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 26px; opacity: 0; transform-style: preserve-3d;
+  }
+  .eyebrow {
+    font-family: 'JetBrains Mono', 'Noto Sans Bengali', monospace;
+    font-size: 22px; font-weight: 800; letter-spacing: 0.1em;
+    color: #FFFFFF; background: #16A34A;
+    border: 2.5px solid #18181B;
+    padding: 10px 26px; border-radius: 999px;
+    box-shadow: 0 6px 0 #18181B;
+  }
+  .hud-card {
+    width: 100%;
+    background: #FFFFFF;
+    border: 3px solid #18181B;
+    border-radius: 34px;
+    padding: 44px 38px;
+    box-shadow: 0 14px 0 #18181B, 0 28px 60px rgba(24, 24, 27, 0.12);
+    display: flex; flex-direction: column; align-items: center; text-align: center; gap: 22px;
+  }
+  .card-title { font-size: 46px; font-weight: 900; line-height: 1.18; color: #18181B; }
+  .card-sub { font-size: 27px; font-weight: 600; line-height: 1.38; color: #52525B; }
+
+  .dual-logos { display: flex; align-items: center; justify-content: center; gap: 26px; }
+  .aws-pill {
+    background: #F4F4F5; padding: 14px 24px; border-radius: 20px;
+    border: 2px solid #18181B;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .aws-img { height: 52px; object-fit: contain; }
+  .diu-img { height: 74px; object-fit: contain; background: #F4F4F5; border: 2px solid #18181B; padding: 8px 14px; border-radius: 16px; }
+  .x-sign { font-size: 38px; font-weight: 900; color: #EA580C; }
+
+  .showcase-frame {
+    width: 100%; max-width: 720px;
+    border-radius: 28px; overflow: hidden;
+    border: 3.5px solid #18181B;
+    box-shadow: 0 14px 0 #16A34A, 0 24px 55px rgba(24, 24, 27, 0.18);
+    background: #0B111E;
+  }
+  .showcase-img { width: 100%; display: block; object-fit: cover; }
+
+  .cover-frame {
+    width: 100%; border-radius: 22px; overflow: hidden;
+    border: 2.5px solid #18181B;
+    box-shadow: 0 10px 26px rgba(24, 24, 27, 0.15);
+  }
+  .cover-img { width: 100%; display: block; }
+
+  .chip-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; }
+  .chip {
+    padding: 16px 28px; border-radius: 18px;
+    background: #ECFDF5; border: 2.5px solid #16A34A;
+    color: #15803D; font-size: 25px; font-weight: 800;
+  }
+
+  .term-box {
+    width: 100%; background: #18181B; border: 2.5px solid #18181B;
+    border-radius: 22px; padding: 26px 28px; text-align: left;
+    font-family: 'JetBrains Mono', monospace; font-size: 23px; line-height: 1.6;
+  }
+  .t-cmd { color: #FB923C; font-weight: 700; }
+  .t-ok { color: #4ADE80; font-weight: 700; }
+
+  .svg-row { display: flex; align-items: center; justify-content: center; gap: 28px; }
+  .svg-badge {
+    width: 118px; height: 118px; padding: 14px;
+    background: #0F172A; border: 2.5px solid #18181B; border-radius: 26px;
+    box-shadow: 0 8px 0 #16A34A;
+    object-fit: contain;
+  }
+
+  .cta-card {
+    width: 100%;
+    background: #FFFFFF;
+    border: 3.5px solid #18181B;
+    border-radius: 36px; padding: 48px 38px;
+    box-shadow: 0 16px 0 #16A34A, 0 32px 64px rgba(24, 24, 27, 0.16);
+    display: flex; flex-direction: column; align-items: center; text-align: center; gap: 22px;
+  }
+  .cta-logo-hero {
+    width: 136px; height: 136px; border-radius: 28px;
+    border: 3px solid #18181B;
+    box-shadow: 0 10px 0 #16A34A;
+  }
+  .cta-btn {
+    padding: 20px 44px; border-radius: 999px;
+    background: #EA580C; color: #FFFFFF;
+    border: 2.5px solid #18181B;
+    font-size: 28px; font-weight: 900; letter-spacing: 0.04em;
+    box-shadow: 0 8px 0 #18181B;
+  }
+
+  /* BIGGER HIGH-IMPACT CAPTIONS */
+  .caption-wrap {
+    position: absolute;
+    bottom: 120px; left: 40px; right: 40px;
+    display: flex; justify-content: center; z-index: 40;
+  }
+  .caption-box {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 16px;
+    padding: 26px 34px; border-radius: 30px;
+    background: rgba(24, 24, 27, 0.95);
+    border: 2.5px solid #18181B;
+    box-shadow: 0 16px 38px rgba(24, 24, 27, 0.25);
+    max-width: 980px;
+  }
+  .cap-word {
+    font-size: 50px;
+    font-weight: 900;
+    color: #F4F4F5;
+    padding: 6px 14px;
+    border-radius: 14px;
+    line-height: 1.15;
+  }
+  .cap-word.active {
+    background: #16A34A;
+    color: #FFFFFF;
+  }
+
+  .progress-track {
+    position: absolute; bottom: 58px; left: 56px; right: 56px;
+    height: 10px; border-radius: 999px;
+    background: rgba(24, 24, 27, 0.14); overflow: hidden; z-index: 40;
+  }
+  .progress-fill {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, #16A34A, #EA580C);
+    border-radius: 999px;
+  }
+</style>
+</head>
+<body>
+<div id="root"
+     data-composition-id="aws-sbg-diu-rafi-bn"
+     data-width="1080"
+     data-height="1920"
+     data-fps="30"
+     data-duration="35.59">
+
+  <audio id="vo-main" src="assets/audio/aws_sbg_rafi_bn.mp3" data-start="0.0" volume="1.0"></audio>
+  <audio id="sfx-bed" src="assets/sfx/tech_drone.wav" data-start="0.0" volume="0.06"></audio>
+  <audio id="sfx-impact-1" src="assets/sfx/impact.wav" data-start="0.0" volume="0.24"></audio>
+  <audio id="sfx-whoosh-2" src="assets/sfx/real/whoosh.wav" data-start="4.54" volume="0.30"></audio>
+  <audio id="sfx-pop-2" src="assets/sfx/real/pop.wav" data-start="4.79" volume="0.28"></audio>
+  <audio id="sfx-whoosh-3" src="assets/sfx/real/whoosh.wav" data-start="10.64" volume="0.30"></audio>
+  <audio id="sfx-click-3" src="assets/sfx/real/click.wav" data-start="10.86" volume="0.26"></audio>
+  <audio id="sfx-whoosh-4" src="assets/sfx/real/whoosh.wav" data-start="16.64" volume="0.30"></audio>
+  <audio id="sfx-pop-4" src="assets/sfx/real/pop.wav" data-start="16.89" volume="0.28"></audio>
+  <audio id="sfx-whoosh-5" src="assets/sfx/real/whoosh.wav" data-start="22.78" volume="0.30"></audio>
+  <audio id="sfx-chime-6" src="assets/sfx/real/chime.wav" data-start="29.18" volume="0.36"></audio>
+
+  <div class="stage">
+    <div class="tech-grid"></div>
+    <div class="glow-1"></div>
+    <div class="glow-2"></div>
+    <div class="px-block px-1"></div>
+    <div class="px-block px-2"></div>
+    <div class="px-block px-3"></div>
+
+    <div class="header">
+      <div class="brand-left">
+        <img src="assets/logos/sbg_fb_logo.jpg" class="sbg-logo-hdr" alt="AWS SBG DIU" />
+        <div>
+          <div class="brand-name">AWS SBG DIU</div>
+          <div class="brand-sub">STUDENT BUILDER GROUP</div>
+        </div>
+      </div>
+      <div class="tag-pill">অফিশিয়াল · DIU ক্যাম্পাস</div>
+    </div>
+
+    <div class="speaker-wrap">
+      <div class="speaker-pill">● RAFI · VOICE CLONE</div>
+    </div>
+
+    <!-- SCENE 1: Problem + AWS x DIU Logos -->
+    <div id="scene-1" class="scene">
+      <div class="eyebrow anim-item">ক্লাউড শেখার আসল সত্য</div>
+      <div class="hud-card anim-card">
+        <div class="dual-logos">
+          <div class="aws-pill"><img src="assets/logos/aws_logo.png" class="aws-img" alt="AWS" /></div>
+          <span class="x-sign">×</span>
+          <img src="assets/logos/diu_full_logo.png" class="diu-img" alt="DIU" />
+        </div>
+        <div class="card-title">YouTube দেখে কি Cloud Engineer হওয়া যায়?</div>
+        <div class="card-sub">একা টিউটোরিয়াল দেখে রিয়েল প্রোডাকশন স্কিল আসে না</div>
+      </div>
+    </div>
+
+    <!-- SCENE 2: Official Launch Post Graphic -->
+    <div id="scene-2" class="scene">
+      <div class="eyebrow anim-item">এখন DIU ক্যাম্পাসে</div>
+      <div class="showcase-frame anim-card">
+        <img src="assets/logos/sbg_post_graphic.jpg" class="showcase-img" alt="AWS SBG DIU Launch" />
+      </div>
+      <div class="tag-pill anim-pop">অফিশিয়াল লঞ্চ · AWS × DIU</div>
+    </div>
+
+    <!-- SCENE 3: Cloud Nodes + Terminal Deploy -->
+    <div id="scene-3" class="scene">
+      <div class="eyebrow anim-item">কোনো বোরিং স্লাইড না</div>
+      <div class="hud-card anim-card">
+        <div class="svg-row">
+          <img src="assets/logos/cloud-nodes.svg" class="svg-badge anim-pop" alt="Cloud Nodes" />
+          <img src="assets/logos/sbg-diu-badge.svg" class="svg-badge anim-pop" alt="SBG DIU Badge" />
+        </div>
+        <div class="card-title">লাইভ Cloud সার্ভার ও রিয়েল প্রজেক্ট</div>
+        <div class="chip-grid"><div class="chip anim-pop">EC2 & Lambda</div><div class="chip anim-pop">Database & S3</div><div class="chip anim-pop">Serverless API</div></div>
+        <div class="term-box">
+          <div class="t-cmd">$ aws deploy --stack diu-builder-lab</div>
+          <div class="t-ok">✓ Cloud architecture live in ap-south-1</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCENE 4: Official Cover + Mentorship -->
+    <div id="scene-4" class="scene">
+      <div class="eyebrow anim-item">আগে AWS না ছুঁয়ে থাকলেও</div>
+      <div class="hud-card anim-card">
+        <div class="cover-frame">
+          <img src="assets/logos/sbg_official_cover.jpg" class="cover-img" alt="AWS SBG DIU Cover" />
+        </div>
+        <div class="card-title">সিনিয়র বিল্ডাররা হাতে-কলমে শেখাবে</div>
+        <div class="card-sub">ল্যাব সেশন · লাইভ হ্যাকাথন · প্রজেক্ট রিভিউ</div>
+      </div>
+    </div>
+
+    <!-- SCENE 5: Cert Badge + DIU Crest -->
+    <div id="scene-5" class="scene">
+      <div class="eyebrow anim-item">PRO-লেভেল CV</div>
+      <div class="hud-card anim-card">
+        <div class="svg-row">
+          <img src="assets/logos/cert-badge.svg" class="svg-badge anim-pop" alt="AWS Certification" />
+          <img src="assets/logos/diu_crest.jpg" class="svg-badge anim-pop" alt="DIU Crest" />
+        </div>
+        <div class="card-title">হ্যাকাথন + AWS Certification</div>
+        <div class="card-sub">গ্র্যাজুয়েশনের আগেই হবে প্রো-লেভেল পোর্টফোলিও</div>
+      </div>
+    </div>
+
+    <!-- SCENE 6: AWS SBG DIU Logo Hero CTA -->
+    <div id="scene-6" class="scene">
+      <div class="eyebrow anim-item">আর দেরি কেন?</div>
+      <div class="cta-card anim-card">
+        <img src="assets/logos/sbg_fb_logo.jpg" class="cta-logo-hero anim-pop" alt="AWS SBG DIU Logo" />
+        <div class="card-title">AWS SBG DIU</div>
+        <div class="card-sub">পেজ ফলো করো এবং Next Meetup-এ সিট বুক করে ফেলো!</div>
+        <div class="cta-btn anim-pop">মিটআপে সিট বুক করো →</div>
+      </div>
+    </div>
+
+    <div class="caption-wrap">
+      <div id="caption-box" class="caption-box"></div>
+    </div>
+
+    <div class="progress-track">
+      <div id="progress-fill" class="progress-fill"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const WORDS = [{"word": "ভাই,", "start": 0.05, "end": 0.283, "speaker": "Rafi", "line_idx": 0, "group": 0}, {"word": "শুধু", "start": 0.283, "end": 0.595, "speaker": "Rafi", "line_idx": 0, "group": 0}, {"word": "YouTube", "start": 0.595, "end": 1.139, "speaker": "Rafi", "line_idx": 0, "group": 0}, {"word": "টিউটোরিয়াল", "start": 1.139, "end": 1.918, "speaker": "Rafi", "line_idx": 0, "group": 1}, {"word": "দেখে", "start": 1.918, "end": 2.229, "speaker": "Rafi", "line_idx": 0, "group": 1}, {"word": "কি", "start": 2.229, "end": 2.385, "speaker": "Rafi", "line_idx": 0, "group": 1}, {"word": "আসলেই", "start": 2.385, "end": 2.774, "speaker": "Rafi", "line_idx": 0, "group": 2}, {"word": "Cloud", "start": 2.774, "end": 3.163, "speaker": "Rafi", "line_idx": 0, "group": 2}, {"word": "Engineer", "start": 3.163, "end": 3.785, "speaker": "Rafi", "line_idx": 0, "group": 2}, {"word": "হওয়া", "start": 3.785, "end": 4.097, "speaker": "Rafi", "line_idx": 0, "group": 3}, {"word": "যায়?", "start": 4.097, "end": 4.33, "speaker": "Rafi", "line_idx": 0, "group": 3}, {"word": "একদমই", "start": 4.59, "end": 5.085, "speaker": "Rafi", "line_idx": 1, "group": 4}, {"word": "না!", "start": 5.085, "end": 5.283, "speaker": "Rafi", "line_idx": 1, "group": 4}, {"word": "সেজন্যই", "start": 5.283, "end": 5.976, "speaker": "Rafi", "line_idx": 1, "group": 4}, {"word": "DIU-তে", "start": 5.976, "end": 6.57, "speaker": "Rafi", "line_idx": 1, "group": 5}, {"word": "শুরু", "start": 6.57, "end": 6.966, "speaker": "Rafi", "line_idx": 1, "group": 5}, {"word": "হয়েছে", "start": 6.966, "end": 7.461, "speaker": "Rafi", "line_idx": 1, "group": 5}, {"word": "অফিশিয়াল", "start": 7.461, "end": 8.252, "speaker": "Rafi", "line_idx": 1, "group": 6}, {"word": "AWS", "start": 8.252, "end": 8.549, "speaker": "Rafi", "line_idx": 1, "group": 6}, {"word": "Student", "start": 8.549, "end": 9.242, "speaker": "Rafi", "line_idx": 1, "group": 6}, {"word": "Builder", "start": 9.242, "end": 9.935, "speaker": "Rafi", "line_idx": 1, "group": 7}, {"word": "Group!", "start": 9.935, "end": 10.43, "speaker": "Rafi", "line_idx": 1, "group": 7}, {"word": "কোনো", "start": 10.69, "end": 11.023, "speaker": "Rafi", "line_idx": 2, "group": 8}, {"word": "বোরিং", "start": 11.023, "end": 11.439, "speaker": "Rafi", "line_idx": 2, "group": 8}, {"word": "স্লাইড", "start": 11.439, "end": 11.938, "speaker": "Rafi", "line_idx": 2, "group": 8}, {"word": "না—সরাসরি", "start": 11.938, "end": 12.687, "speaker": "Rafi", "line_idx": 2, "group": 9}, {"word": "লাইভ", "start": 12.687, "end": 13.019, "speaker": "Rafi", "line_idx": 2, "group": 9}, {"word": "Cloud", "start": 13.019, "end": 13.435, "speaker": "Rafi", "line_idx": 2, "group": 9}, {"word": "সার্ভার,", "start": 13.435, "end": 14.018, "speaker": "Rafi", "line_idx": 2, "group": 10}, {"word": "Database", "start": 14.018, "end": 14.683, "speaker": "Rafi", "line_idx": 2, "group": 10}, {"word": "আর", "start": 14.683, "end": 14.849, "speaker": "Rafi", "line_idx": 2, "group": 10}, {"word": "রিয়েল", "start": 14.849, "end": 15.265, "speaker": "Rafi", "line_idx": 2, "group": 11}, {"word": "প্রজেক্ট", "start": 15.265, "end": 15.931, "speaker": "Rafi", "line_idx": 2, "group": 11}, {"word": "ডিপ্লয়!", "start": 15.931, "end": 16.43, "speaker": "Rafi", "line_idx": 2, "group": 11}, {"word": "আগে", "start": 16.69, "end": 16.994, "speaker": "Rafi", "line_idx": 3, "group": 12}, {"word": "AWS", "start": 16.994, "end": 17.298, "speaker": "Rafi", "line_idx": 3, "group": 12}, {"word": "না", "start": 17.298, "end": 17.501, "speaker": "Rafi", "line_idx": 3, "group": 12}, {"word": "ছুঁয়ে", "start": 17.501, "end": 18.008, "speaker": "Rafi", "line_idx": 3, "group": 13}, {"word": "থাকলেও", "start": 18.008, "end": 18.616, "speaker": "Rafi", "line_idx": 3, "group": 13}, {"word": "টেনশন", "start": 18.616, "end": 19.123, "speaker": "Rafi", "line_idx": 3, "group": 13}, {"word": "নাই—সিনিয়র", "start": 19.123, "end": 20.137, "speaker": "Rafi", "line_idx": 3, "group": 14}, {"word": "বিল্ডাররা", "start": 20.137, "end": 21.049, "speaker": "Rafi", "line_idx": 3, "group": 14}, {"word": "হাতে-কলমে", "start": 21.049, "end": 21.962, "speaker": "Rafi", "line_idx": 3, "group": 14}, {"word": "শেখাবে!", "start": 21.962, "end": 22.57, "speaker": "Rafi", "line_idx": 3, "group": 15}, {"word": "ল্যাব,", "start": 22.83, "end": 23.31, "speaker": "Rafi", "line_idx": 4, "group": 16}, {"word": "হ্যাকাথন", "start": 23.31, "end": 24.077, "speaker": "Rafi", "line_idx": 4, "group": 16}, {"word": "আর", "start": 24.077, "end": 24.269, "speaker": "Rafi", "line_idx": 4, "group": 16}, {"word": "AWS", "start": 24.269, "end": 24.557, "speaker": "Rafi", "line_idx": 4, "group": 17}, {"word": "Certification—গ্র্যাজুয়েশনের", "start": 24.557, "end": 27.243, "speaker": "Rafi", "line_idx": 4, "group": 17}, {"word": "আগেই", "start": 27.243, "end": 27.627, "speaker": "Rafi", "line_idx": 4, "group": 17}, {"word": "হবে", "start": 27.627, "end": 27.915, "speaker": "Rafi", "line_idx": 4, "group": 18}, {"word": "Pro-লেভেল", "start": 27.915, "end": 28.778, "speaker": "Rafi", "line_idx": 4, "group": 18}, {"word": "CV!", "start": 28.778, "end": 28.97, "speaker": "Rafi", "line_idx": 4, "group": 18}, {"word": "দেরি", "start": 29.23, "end": 29.751, "speaker": "Rafi", "line_idx": 5, "group": 19}, {"word": "কেন?", "start": 29.751, "end": 30.142, "speaker": "Rafi", "line_idx": 5, "group": 19}, {"word": "AWS", "start": 30.142, "end": 30.532, "speaker": "Rafi", "line_idx": 5, "group": 19}, {"word": "SBG", "start": 30.532, "end": 30.923, "speaker": "Rafi", "line_idx": 5, "group": 20}, {"word": "DIU", "start": 30.923, "end": 31.314, "speaker": "Rafi", "line_idx": 5, "group": 20}, {"word": "ফলো", "start": 31.314, "end": 31.704, "speaker": "Rafi", "line_idx": 5, "group": 20}, {"word": "করো", "start": 31.704, "end": 32.095, "speaker": "Rafi", "line_idx": 5, "group": 21}, {"word": "আর", "start": 32.095, "end": 32.355, "speaker": "Rafi", "line_idx": 5, "group": 21}, {"word": "Next", "start": 32.355, "end": 32.876, "speaker": "Rafi", "line_idx": 5, "group": 21}, {"word": "Meetup-এ", "start": 32.876, "end": 33.918, "speaker": "Rafi", "line_idx": 5, "group": 22}, {"word": "সিট", "start": 33.918, "end": 34.309, "speaker": "Rafi", "line_idx": 5, "group": 22}, {"word": "বুক", "start": 34.309, "end": 34.699, "speaker": "Rafi", "line_idx": 5, "group": 22}, {"word": "করো!", "start": 34.699, "end": 35.09, "speaker": "Rafi", "line_idx": 5, "group": 23}];
+const TOTAL_DUR = 35.59;
+const capBox = document.getElementById('caption-box');
+const progFill = document.getElementById('progress-fill');
+
+let lastGroup = -1;
+function updateHUD(t) {
+  progFill.style.width = Math.min(100, Math.max(0, (t / TOTAL_DUR) * 100)).toFixed(2) + '%';
+
+  let activeWord = null;
+  for (let i = 0; i < WORDS.length; i++) {
+    if (t >= WORDS[i].start && t <= WORDS[i].end + 0.12) {
+      activeWord = WORDS[i];
+      break;
+    }
+  }
+  if (!activeWord) {
+    for (let i = WORDS.length - 1; i >= 0; i--) {
+      if (t >= WORDS[i].start) {
+        activeWord = WORDS[i];
+        break;
+      }
+    }
+  }
+  if (!activeWord) activeWord = WORDS[0];
+
+  const grp = activeWord.group;
+  if (grp !== lastGroup) {
+    lastGroup = grp;
+    const grpWords = WORDS.filter(w => w.group === grp);
+    capBox.innerHTML = '';
+    grpWords.forEach((w) => {
+      const el = document.createElement('span');
+      el.className = 'cap-word';
+      el.textContent = w.word;
+      capBox.appendChild(el);
+    });
+  }
+  const grpWords = WORDS.filter(w => w.group === grp);
+  const children = capBox.children;
+  for (let i = 0; i < grpWords.length; i++) {
+    const w = grpWords[i];
+    const el = children[i];
+    if (!el) continue;
+    const isCurrent = (t >= w.start && t <= w.end + 0.08);
+    el.className = 'cap-word' + (isCurrent ? ' active' : '');
+  }
+}
+
+const tl = gsap.timeline({
+  paused: true,
+  onUpdate: function() { updateHUD(this.time()); }
+});
+
+tl.to('.px-1', { y: 30, rotation: 90, duration: TOTAL_DUR, ease: 'sine.inOut' }, 0);
+tl.to('.px-2', { x: -24, y: -20, duration: TOTAL_DUR, ease: 'sine.inOut' }, 0);
+tl.to('.px-3', { y: -36, rotation: -90, duration: TOTAL_DUR, ease: 'sine.inOut' }, 0);
+
+const scenes = ['#scene-1', '#scene-2', '#scene-3', '#scene-4', '#scene-5', '#scene-6'];
+const times = [0.0, 4.54, 10.64, 16.64, 22.78, 29.18];
+
+scenes.forEach((sel, i) => {
+  const tStart = times[i];
+  const rotY = (i % 2 === 0) ? -12 : 12;
+  tl.fromTo(
+    sel,
+    { opacity: 0, y: 50, z: -130, rotateX: 9, rotateY: rotY, scale: 0.93 },
+    { opacity: 1, y: 0, z: 0, rotateX: 0, rotateY: 0, scale: 1, duration: 0.45, ease: 'power3.out' },
+    tStart
+  );
+  tl.fromTo(
+    sel + ' .anim-pop',
+    { scale: 0.78, opacity: 0 },
+    { scale: 1, opacity: 1, duration: 0.36, stagger: 0.08, ease: 'back.out(1.7)' },
+    tStart + 0.14
+  );
+  if (i < scenes.length - 1) {
+    tl.to(
+      sel,
+      { opacity: 0, y: -38, z: 70, rotateX: -7, duration: 0.28, ease: 'power2.in' },
+      times[i + 1] - 0.16
+    );
+  }
+});
+
+tl.to({}, { duration: 0.1 }, TOTAL_DUR);
+updateHUD(0);
+
+window.__timelines = window.__timelines || {};
+window.__timelines["aws-sbg-diu-rafi-bn"] = tl;
+</script>
+</body>
+</html>

@@ -1,0 +1,595 @@
+import json
+import os
+import subprocess
+
+ENGINE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+AUDIO_DIR = os.path.join(ENGINE_DIR, "assets/audio")
+
+
+def get_duration(mp3_path: str) -> float:
+    out = subprocess.check_output(
+        [
+            "/opt/homebrew/bin/ffprobe",
+            "-v",
+            "error",
+            "-show_entries",
+            "format=duration",
+            "-of",
+            "default=noprint_wrappers=1:nokey=1",
+            mp3_path,
+        ],
+        text=True,
+    ).strip()
+    return float(out)
+
+
+def main():
+    prefix = "bd_pk_gdp_en"
+    mp3_path = os.path.join(AUDIO_DIR, f"{prefix}.mp3")
+    with open(os.path.join(AUDIO_DIR, f"{prefix}.timestamps.json"), encoding="utf-8") as f:
+        words = json.load(f)
+    with open(os.path.join(AUDIO_DIR, f"{prefix}.spans.json"), encoding="utf-8") as f:
+        spans = json.load(f)
+
+    dur = round(get_duration(mp3_path) + 0.45, 2)
+    t = [sp["start"] for sp in spans]
+    words_json = json.dumps(words, ensure_ascii=False)
+    spans_json = json.dumps(spans, ensure_ascii=False)
+    comp_id = "bd-pk-gdp-1971-2026"
+
+    html = f'''<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>{comp_id}</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800;900&family=JetBrains+Mono:wght@600;700;800&display=swap" rel="stylesheet" />
+<script src="assets/js/gsap.min.js"></script>
+<style>
+  * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+  html, body {{
+    width: 1080px;
+    height: 1920px;
+    overflow: hidden;
+    background: #081E38;
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: #F8FAFC;
+  }}
+  .stage {{
+    position: relative;
+    width: 1080px;
+    height: 1920px;
+    background: #0A2A4A;
+    overflow: hidden;
+  }}
+  .ocean-grid {{
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 90px 90px;
+    pointer-events: none;
+  }}
+
+  /* MAP CAMERA LAYER */
+  .map-cam {{
+    position: absolute;
+    inset: 0;
+    transform-origin: 50% 50%;
+  }}
+  .map-svg {{
+    width: 1080px;
+    height: 1920px;
+    display: block;
+  }}
+
+  /* TOP BAR (Reference Style) */
+  .top-bar {{
+    position: absolute;
+    top: 48px; left: 36px; right: 36px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 14px; z-index: 40;
+  }}
+  .chapter-pill {{
+    padding: 12px 24px;
+    border-radius: 12px;
+    background: #0F172A;
+    border: 2.5px solid #FACC15;
+    color: #FACC15;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 21px; font-weight: 800; letter-spacing: 0.04em;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45);
+  }}
+  .disclaimer-pill {{
+    padding: 10px 16px;
+    border-radius: 10px;
+    background: #991B1B;
+    border: 2px solid #FCA5A5;
+    color: #FFFFFF;
+    font-size: 14px; font-weight: 800; letter-spacing: 0.05em;
+    text-align: center;
+  }}
+
+  /* COUNTRYBALLS */
+  .balls-row {{
+    position: absolute;
+    top: 1020px; left: 70px; right: 70px;
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 25;
+  }}
+  .ball-wrap {{
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+  }}
+  .ball-label {{
+    padding: 6px 18px; border-radius: 999px;
+    background: rgba(15, 23, 42, 0.9); border: 2px solid #FFFFFF;
+    font-size: 20px; font-weight: 900; letter-spacing: 0.06em;
+  }}
+  .ball-label.pk {{ color: #4ADE80; border-color: #4ADE80; }}
+  .ball-label.bd {{ color: #F87171; border-color: #F87171; }}
+
+  /* OVERLAY DATA & CITATION CARDS */
+  .card-stage {{
+    position: absolute;
+    top: 170px; left: 56px; right: 56px;
+    height: 780px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    z-index: 30;
+    pointer-events: none;
+  }}
+  .data-card {{
+    position: absolute;
+    width: 100%;
+    background: rgba(15, 23, 42, 0.94);
+    border: 3px solid #E2E8F0;
+    border-radius: 28px;
+    padding: 36px 34px;
+    box-shadow: 0 24px 55px rgba(0, 0, 0, 0.6);
+    display: flex; flex-direction: column; align-items: center; text-align: center; gap: 20px;
+    opacity: 0;
+  }}
+  .cite-tag {{
+    align-self: flex-start;
+    padding: 7px 16px; border-radius: 8px;
+    background: #FACC15; color: #0F172A;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px; font-weight: 800; letter-spacing: 0.05em;
+  }}
+  .card-head {{ font-size: 40px; font-weight: 900; color: #FFFFFF; line-height: 1.15; }}
+  .stat-row {{
+    width: 100%; display: flex; align-items: stretch; justify-content: center; gap: 20px;
+  }}
+  .stat-box {{
+    flex: 1; padding: 26px 18px; border-radius: 20px;
+    background: #1E293B; border: 2.5px solid #475569;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }}
+  .stat-box.bd {{ border-color: #22C55E; background: rgba(20, 83, 45, 0.35); }}
+  .stat-box.pk {{ border-color: #38BDF8; background: rgba(12, 74, 110, 0.35); }}
+  .sb-country {{ font-size: 20px; font-weight: 800; letter-spacing: 0.08em; color: #CBD5E1; }}
+  .sb-val {{ font-size: 56px; font-weight: 900; color: #FFFFFF; }}
+  .sb-sub {{ font-size: 20px; font-weight: 700; color: #FACC15; }}
+
+  .driver-grid {{ display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; }}
+  .driver-pill {{
+    padding: 14px 24px; border-radius: 16px;
+    background: rgba(34, 197, 94, 0.18); border: 2px solid #22C55E;
+    color: #86EFAC; font-size: 26px; font-weight: 800;
+  }}
+
+  .chart-wrap {{
+    width: 100%; background: #0B1324; border: 2px solid #334155;
+    border-radius: 22px; padding: 22px;
+  }}
+
+  /* BOTTOM SPEAKER PILL + BIG YELLOW-HIGHLIGHT CAPTIONS */
+  .bottom-hud {{
+    position: absolute;
+    bottom: 92px; left: 44px; right: 44px;
+    display: flex; flex-direction: column; align-items: center; gap: 14px;
+    z-index: 40;
+  }}
+  .speaker-pill {{
+    padding: 8px 26px; border-radius: 999px;
+    background: #0F172A; border: 2.5px solid #4ADE80;
+    color: #4ADE80; font-size: 22px; font-weight: 900; letter-spacing: 0.1em;
+  }}
+  .speaker-pill.bd {{ border-color: #F87171; color: #F87171; }}
+  .caption-box {{
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 14px;
+    padding: 22px 30px; border-radius: 26px;
+    background: rgba(8, 18, 34, 0.92);
+    border: 2px solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.65);
+    max-width: 980px;
+  }}
+  .cap-word {{
+    font-size: 46px; font-weight: 900; color: #FFFFFF;
+    padding: 4px 10px; border-radius: 12px; line-height: 1.15;
+  }}
+  .cap-word.active {{
+    background: #FACC15;
+    color: #0F172A;
+  }}
+
+  .progress-track {{
+    position: absolute; bottom: 42px; left: 56px; right: 56px;
+    height: 8px; border-radius: 999px;
+    background: rgba(255, 255, 255, 0.16); overflow: hidden; z-index: 40;
+  }}
+  .progress-fill {{
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, #FACC15, #22C55E);
+    border-radius: 999px;
+  }}
+</style>
+</head>
+<body>
+<div id="root"
+     data-composition-id="{comp_id}"
+     data-width="1080"
+     data-height="1920"
+     data-fps="30"
+     data-duration="{dur}">
+
+  <audio id="vo-main" src="assets/audio/{prefix}.mp3" data-start="0.0" volume="1.0"></audio>
+  <audio id="sfx-bed" src="assets/sfx/tech_drone.wav" data-start="0.0" volume="0.06"></audio>
+  <audio id="sfx-impact-0" src="assets/sfx/impact.wav" data-start="{t[0]}" volume="0.22"></audio>
+  <audio id="sfx-pop-1" src="assets/sfx/real/pop.wav" data-start="{t[1]}" volume="0.28"></audio>
+  <audio id="sfx-whoosh-2" src="assets/sfx/real/whoosh.wav" data-start="{t[2]}" volume="0.28"></audio>
+  <audio id="sfx-whoosh-3" src="assets/sfx/real/whoosh.wav" data-start="{t[3]}" volume="0.28"></audio>
+  <audio id="sfx-impact-4" src="assets/sfx/impact.wav" data-start="{t[4]}" volume="0.24"></audio>
+  <audio id="sfx-click-5" src="assets/sfx/real/click.wav" data-start="{t[5]}" volume="0.26"></audio>
+  <audio id="sfx-pop-6" src="assets/sfx/real/pop.wav" data-start="{t[6]}" volume="0.28"></audio>
+  <audio id="sfx-whoosh-7" src="assets/sfx/real/whoosh.wav" data-start="{t[7]}" volume="0.28"></audio>
+  <audio id="sfx-chime-8" src="assets/sfx/real/chime.wav" data-start="{t[8]}" volume="0.34"></audio>
+
+  <div class="stage">
+    <div class="ocean-grid"></div>
+
+    <!-- REAL NATURAL EARTH SOUTH ASIA VECTOR MAP -->
+    <div id="map-cam" class="map-cam">
+      <img src="assets/maps/south_asia_real.svg" class="map-svg" alt="South Asia Map" />
+    </div>
+
+    <!-- TOP BAR -->
+    <div class="top-bar">
+      <div id="chapter-pill" class="chapter-pill">1971: THE STARTING LINE</div>
+      <div class="disclaimer-pill">FICTIONAL DIALOGUE · WORLD BANK / IMF</div>
+    </div>
+
+    <!-- OVERLAY DATA & CHART CARDS -->
+    <div class="card-stage">
+      <!-- Card 1: 1971 Baseline -->
+      <div id="card-1" class="data-card">
+        <div class="cite-tag">WORLD BANK HISTORICAL DATA · 1971</div>
+        <div class="card-head">The Starting Line (1971)</div>
+        <div class="stat-row">
+          <div class="stat-box pk">
+            <div class="sb-country">PAKISTAN</div>
+            <div class="sb-val">$10.7B</div>
+            <div class="sb-sub">Larger Base</div>
+          </div>
+          <div class="stat-box bd">
+            <div class="sb-country">BANGLADESH</div>
+            <div class="sb-val">$9.0B</div>
+            <div class="sb-sub">~$70–$90 / person</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: 2000 Lead -->
+      <div id="card-2" class="data-card">
+        <div class="cite-tag">WORLD BANK · YEAR 2000</div>
+        <div class="card-head">Pakistan Nearly 2× Ahead</div>
+        <div class="stat-row">
+          <div class="stat-box pk">
+            <div class="sb-country">PAKISTAN</div>
+            <div class="sb-val">$99.5B</div>
+            <div class="sb-sub">1.8× Larger</div>
+          </div>
+          <div class="stat-box bd">
+            <div class="sb-country">BANGLADESH</div>
+            <div class="sb-val">$54.7B</div>
+            <div class="sb-sub">Building Base</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Dhaka Drivers -->
+      <div id="card-3" class="data-card">
+        <div class="cite-tag">STRUCTURAL SHIFT · 2000–2020</div>
+        <div class="card-head">What Changed in Bangladesh?</div>
+        <div class="driver-grid">
+          <div class="driver-pill">RMG Export Engine</div>
+          <div class="driver-pill">Microfinance</div>
+          <div class="driver-pill">Female Workforce</div>
+          <div class="driver-pill">Steady Remittances</div>
+        </div>
+      </div>
+
+      <!-- Card 4: Animated 1971 -> 2026 Crossover Chart -->
+      <div id="card-4" class="data-card">
+        <div class="cite-tag">NOMINAL GDP · 1971 → 2026 (USD)</div>
+        <div class="card-head">The 2020 Crossover</div>
+        <div class="chart-wrap">
+          <svg viewBox="0 0 820 320" width="100%" xmlns="http://www.w3.org/2000/svg">
+            <line x1="60" y1="270" x2="780" y2="270" stroke="#475569" stroke-width="3" />
+            <line x1="60" y1="40" x2="60" y2="270" stroke="#475569" stroke-width="3" />
+            <!-- Pakistan curve -->
+            <path id="pk-line" d="M60,262 L280,215 L540,130 L680,88 L760,72"
+                  fill="none" stroke="#38BDF8" stroke-width="7" stroke-linecap="round" />
+            <!-- Bangladesh curve -->
+            <path id="bd-line" d="M60,264 L280,238 L540,115 L680,62 L760,42"
+                  fill="none" stroke="#22C55E" stroke-width="8" stroke-linecap="round" />
+            <!-- Crossover marker -->
+            <circle cx="515" cy="124" r="11" fill="#FACC15" stroke="#0F172A" stroke-width="3" />
+            <text x="515" y="102" text-anchor="middle" fill="#FACC15" font-size="20" font-weight="900">2020 CROSSOVER</text>
+            <text x="60" y="302" text-anchor="middle" fill="#94A3B8" font-size="20" font-weight="700">1971</text>
+            <text x="280" y="302" text-anchor="middle" fill="#94A3B8" font-size="20" font-weight="700">2000</text>
+            <text x="540" y="302" text-anchor="middle" fill="#94A3B8" font-size="20" font-weight="700">2020</text>
+            <text x="760" y="302" text-anchor="middle" fill="#94A3B8" font-size="20" font-weight="700">2026</text>
+            <text x="760" y="28" text-anchor="end" fill="#22C55E" font-size="22" font-weight="900">BD $506B</text>
+            <text x="760" y="105" text-anchor="end" fill="#38BDF8" font-size="22" font-weight="900">PK $451B</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Card 5: 2025-2026 Per Capita & Nominal -->
+      <div id="card-5" class="data-card">
+        <div class="cite-tag">WORLD BANK / IMF WEO · 2026 EST.</div>
+        <div class="card-head">GDP Per Capita &amp; Total Output</div>
+        <div class="stat-row">
+          <div class="stat-box bd">
+            <div class="sb-country">BANGLADESH</div>
+            <div class="sb-val">$2,890</div>
+            <div class="sb-sub">Nominal: ~$506B</div>
+          </div>
+          <div class="stat-box pk">
+            <div class="sb-country">PAKISTAN</div>
+            <div class="sb-val">~$1,700</div>
+            <div class="sb-sub">Nominal: ~$451B</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 6: Lesson / CTA -->
+      <div id="card-6" class="data-card">
+        <div class="cite-tag">55 YEARS · 1971 → 2026</div>
+        <div class="card-head">Steady Exports Beat Short-Term Booms</div>
+        <div class="driver-pill" style="background:#FACC15; color:#0F172A; border-color:#FACC15;">
+          FOLLOW FOR MORE DATA STORIES →
+        </div>
+      </div>
+    </div>
+
+    <!-- COUNTRYBALLS (Pakistan Left, Bangladesh Right) -->
+    <div class="balls-row">
+      <div id="ball-pk" class="ball-wrap">
+        <svg id="svg-pk" width="210" height="210" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <defs><clipPath id="clip-pk"><circle cx="100" cy="100" r="90" /></clipPath></defs>
+          <g clip-path="url(#clip-pk)">
+            <rect x="0" y="0" width="58" height="200" fill="#FFFFFF" />
+            <rect x="58" y="0" width="142" height="200" fill="#01411C" />
+            <circle cx="132" cy="100" r="38" fill="#FFFFFF" />
+            <circle cx="144" cy="92" r="32" fill="#01411C" />
+            <polygon points="148,72 152,83 163,83 154,90 157,101 148,94 139,101 142,90 133,83 144,83" fill="#FFFFFF" />
+          </g>
+          <circle cx="100" cy="100" r="90" fill="none" stroke="#0F172A" stroke-width="8" />
+          <!-- Animated Face Group -->
+          <g id="pk-face">
+            <g id="pk-brows">
+              <path id="pk-brow-l" d="M68,70 Q85,63 101,72" fill="none" stroke="#0F172A" stroke-width="6" stroke-linecap="round" />
+              <path id="pk-brow-r" d="M116,72 Q132,63 149,70" fill="none" stroke="#0F172A" stroke-width="6" stroke-linecap="round" />
+            </g>
+            <g id="pk-eyes" style="transform-origin: 108px 96px;">
+              <ellipse cx="85" cy="96" rx="16" ry="20" fill="#FFFFFF" stroke="#0F172A" stroke-width="5" />
+              <ellipse cx="132" cy="96" rx="16" ry="20" fill="#FFFFFF" stroke="#0F172A" stroke-width="5" />
+              <g id="pk-pupils">
+                <circle cx="89" cy="97" r="6.5" fill="#0F172A" />
+                <circle cx="136" cy="97" r="6.5" fill="#0F172A" />
+                <circle cx="91" cy="94" r="2.2" fill="#FFFFFF" />
+                <circle cx="138" cy="94" r="2.2" fill="#FFFFFF" />
+              </g>
+            </g>
+          </g>
+        </svg>
+        <div class="ball-label pk">PAKISTAN</div>
+      </div>
+
+      <div id="ball-bd" class="ball-wrap">
+        <svg id="svg-bd" width="210" height="210" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="100" cy="100" r="90" fill="#006A4E" stroke="#0F172A" stroke-width="8" />
+          <circle cx="90" cy="100" r="42" fill="#F42A41" />
+          <!-- Animated Face Group -->
+          <g id="bd-face">
+            <g id="bd-brows">
+              <path id="bd-brow-l" d="M59,70 Q76,63 92,72" fill="none" stroke="#0F172A" stroke-width="6" stroke-linecap="round" />
+              <path id="bd-brow-r" d="M106,72 Q122,63 139,70" fill="none" stroke="#0F172A" stroke-width="6" stroke-linecap="round" />
+            </g>
+            <g id="bd-eyes" style="transform-origin: 99px 96px;">
+              <ellipse cx="76" cy="96" rx="16" ry="20" fill="#FFFFFF" stroke="#0F172A" stroke-width="5" />
+              <ellipse cx="122" cy="96" rx="16" ry="20" fill="#FFFFFF" stroke="#0F172A" stroke-width="5" />
+              <g id="bd-pupils">
+                <circle cx="72" cy="97" r="6.5" fill="#0F172A" />
+                <circle cx="118" cy="97" r="6.5" fill="#0F172A" />
+                <circle cx="74" cy="94" r="2.2" fill="#FFFFFF" />
+                <circle cx="120" cy="94" r="2.2" fill="#FFFFFF" />
+              </g>
+            </g>
+          </g>
+        </svg>
+        <div class="ball-label bd">BANGLADESH</div>
+      </div>
+    </div>
+
+    <!-- SPEAKER PILL + YELLOW HIGHLIGHT CAPTIONS -->
+    <div class="bottom-hud">
+      <div id="speaker-pill" class="speaker-pill">PAKISTAN</div>
+      <div id="caption-box" class="caption-box"></div>
+    </div>
+
+    <div class="progress-track">
+      <div id="progress-fill" class="progress-fill"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const WORDS = {words_json};
+const SPANS = {spans_json};
+const TOTAL_DUR = {dur};
+const capBox = document.getElementById('caption-box');
+const speakerPill = document.getElementById('speaker-pill');
+const chapterPill = document.getElementById('chapter-pill');
+const progFill = document.getElementById('progress-fill');
+const ballPk = document.getElementById('ball-pk');
+const ballBd = document.getElementById('ball-bd');
+
+let lastGroup = -1;
+function updateHUD(t) {{
+  progFill.style.width = Math.min(100, Math.max(0, (t / TOTAL_DUR) * 100)).toFixed(2) + '%';
+
+  let activeSpan = SPANS[0];
+  for (let i = 0; i < SPANS.length; i++) {{
+    if (t >= SPANS[i].start) activeSpan = SPANS[i];
+  }}
+  chapterPill.textContent = activeSpan.chapter;
+  if (activeSpan.speaker === 'Bangladesh') {{
+    speakerPill.textContent = 'BANGLADESH';
+    speakerPill.className = 'speaker-pill bd';
+    ballBd.style.transform = 'scale(1.08) translateY(-10px)';
+    ballPk.style.transform = 'scale(0.95)';
+  }} else {{
+    speakerPill.textContent = 'PAKISTAN';
+    speakerPill.className = 'speaker-pill';
+    ballPk.style.transform = 'scale(1.08) translateY(-10px)';
+    ballBd.style.transform = 'scale(0.95)';
+  }}
+
+  let activeWord = null;
+  for (let i = 0; i < WORDS.length; i++) {{
+    if (t >= WORDS[i].start && t <= WORDS[i].end + 0.12) {{
+      activeWord = WORDS[i];
+      break;
+    }}
+  }}
+  if (!activeWord) {{
+    for (let i = WORDS.length - 1; i >= 0; i--) {{
+      if (t >= WORDS[i].start) {{
+        activeWord = WORDS[i];
+        break;
+      }}
+    }}
+  }}
+  if (!activeWord) activeWord = WORDS[0];
+
+  const grp = activeWord.group;
+  if (grp !== lastGroup) {{
+    lastGroup = grp;
+    const grpWords = WORDS.filter(w => w.group === grp);
+    capBox.innerHTML = '';
+    grpWords.forEach((w) => {{
+      const el = document.createElement('span');
+      el.className = 'cap-word';
+      el.textContent = w.word;
+      capBox.appendChild(el);
+    }});
+  }}
+  const grpWords = WORDS.filter(w => w.group === grp);
+  const children = capBox.children;
+  for (let i = 0; i < grpWords.length; i++) {{
+    const w = grpWords[i];
+    const el = children[i];
+    if (!el) continue;
+    const isCurrent = (t >= w.start && t <= w.end + 0.08);
+    el.className = 'cap-word' + (isCurrent ? ' active' : '');
+  }}
+}}
+
+const tl = gsap.timeline({{
+  paused: true,
+  onUpdate: function() {{ updateHUD(this.time()); }}
+}});
+
+// Map camera pan & zoom across South Asia
+tl.to('#map-cam', {{ scale: 1.18, x: 120, y: 80, duration: 2.5, ease: 'sine.inOut' }}, {t[0]});
+tl.to('#map-cam', {{ scale: 1.24, x: -160, y: 40, duration: 2.5, ease: 'sine.inOut' }}, {t[3]});
+tl.to('#map-cam', {{ scale: 1.0, x: 0, y: 0, duration: 2.5, ease: 'sine.inOut' }}, {t[5]});
+
+// Card reveals mapped to dialogue beats
+const cardShow = [
+  ['#card-1', {t[0]}, {t[2]} - 0.15],
+  ['#card-2', {t[2]}, {t[3]} - 0.15],
+  ['#card-3', {t[3]}, {t[4]} - 0.15],
+  ['#card-4', {t[4]}, {t[6]} - 0.15],
+  ['#card-5', {t[6]}, {t[8]} - 0.15],
+  ['#card-6', {t[8]}, TOTAL_DUR]
+];
+
+cardShow.forEach(([sel, start, end], i) => {{
+  tl.fromTo(sel, {{ opacity: 0, y: 36, scale: 0.92 }}, {{ opacity: 1, y: 0, scale: 1, duration: 0.4, ease: 'back.out(1.4)' }}, start);
+  if (i < cardShow.length - 1) {{
+    tl.to(sel, {{ opacity: 0, y: -24, scale: 0.96, duration: 0.25, ease: 'power2.in' }}, end);
+  }}
+}});
+
+// Animate GDP Chart lines drawing live during Card 4
+tl.fromTo('#pk-line', {{ strokeDasharray: 1000, strokeDashoffset: 1000 }}, {{ strokeDashoffset: 0, duration: 2.2, ease: 'power2.out' }}, {t[4]} + 0.25);
+tl.fromTo('#bd-line', {{ strokeDasharray: 1000, strokeDashoffset: 1000 }}, {{ strokeDashoffset: 0, duration: 2.5, ease: 'power2.out' }}, {t[4]} + 0.45);
+
+// Countryball Face Movements: Talking Wobble, Eye Glances, Blinks & Expressions
+SPANS.forEach((sp) => {{
+  const isBD = sp.speaker === 'Bangladesh';
+  const svgSel = isBD ? '#svg-bd' : '#svg-pk';
+  const faceSel = isBD ? '#bd-face' : '#pk-face';
+  const pupilSel = isBD ? '#bd-pupils' : '#pk-pupils';
+  const dur = Math.max(0.6, sp.end - sp.start);
+  const steps = Math.max(2, Math.floor(dur / 0.32));
+  for (let k = 0; k < steps; k++) {{
+    const st = sp.start + k * 0.32;
+    const up = k % 2 === 0;
+    tl.to(svgSel, {{
+      scaleY: up ? 1.05 : 0.96,
+      scaleX: up ? 0.96 : 1.04,
+      rotation: up ? (isBD ? -3 : 3) : 0,
+      y: up ? -12 : 0,
+      duration: 0.16,
+      ease: 'sine.inOut'
+    }}, st);
+  }}
+  tl.to(svgSel, {{ scaleX: 1, scaleY: 1, rotation: 0, y: 0, duration: 0.18 }}, sp.end - 0.1);
+  // Look toward opponent or up at chart
+  tl.to(faceSel, {{ x: isBD ? -6 : 6, y: -3, duration: 0.3, ease: 'power2.out' }}, sp.start);
+  tl.to(pupilSel, {{ x: isBD ? -3 : 3, y: -3, duration: 0.35, ease: 'power2.out' }}, sp.start + 0.4);
+}});
+
+// Periodic natural eye blinks
+for (let bt = 1.8; bt < TOTAL_DUR - 1.0; bt += 3.4) {{
+  tl.to('#pk-eyes', {{ scaleY: 0.1, duration: 0.07, yoyo: true, repeat: 1, ease: 'power1.inOut' }}, bt);
+  tl.to('#bd-eyes', {{ scaleY: 0.1, duration: 0.07, yoyo: true, repeat: 1, ease: 'power1.inOut' }}, bt + 0.6);
+}}
+
+// Expressive beat reactions: Pakistan smug in 2000, shocked at 2020 crossover
+tl.to('#pk-brows', {{ y: 4, rotation: -4, duration: 0.3 }}, {t[2]});
+tl.to('#pk-brows', {{ y: -9, rotation: 0, duration: 0.25 }}, {t[4]});
+tl.to('#pk-eyes', {{ scale: 1.18, duration: 0.25 }}, {t[4]});
+tl.to('#pk-eyes', {{ scale: 1.0, duration: 0.3 }}, {t[5]});
+tl.to('#bd-brows', {{ y: -4, duration: 0.3 }}, {t[5]});
+
+tl.to({{}}, {{ duration: 0.1 }}, TOTAL_DUR);
+updateHUD(0);
+
+window.__timelines = window.__timelines || {{}};
+window.__timelines["{comp_id}"] = tl;
+</script>
+</body>
+</html>
+'''
+    out_path = os.path.join(ENGINE_DIR, "bd-pk-gdp-1971-2026.html")
+    with open(out_path, "w", encoding="utf-8") as f:
+        f.write(html)
+    print(f"Generated {out_path} (duration={dur}s)")
+
+
+if __name__ == "__main__":
+    main()

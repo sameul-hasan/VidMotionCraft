@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>omnivoice-reel-en</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+<script src="assets/js/gsap.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 1080px;
+    height: 1920px;
+    overflow: hidden;
+    background: #F4F7FB;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #0F172A;
+  }
+  .stage {
+    position: relative;
+    width: 1080px;
+    height: 1920px;
+    background: radial-gradient(circle at 15% 10%, #EEF2FF 0%, #F8FAFC 45%, #ECFDF5 100%);
+    overflow: hidden;
+  }
+  .grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(rgba(15, 23, 42, 0.035) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(15, 23, 42, 0.035) 1px, transparent 1px);
+    background-size: 56px 56px;
+    pointer-events: none;
+  }
+  .header {
+    position: absolute;
+    top: 72px;
+    left: 64px;
+    right: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 30;
+  }
+  .brand-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .brand-icon {
+    width: 58px;
+    height: 58px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #2563EB, #7C3AED);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 900;
+    font-size: 26px;
+    box-shadow: 0 10px 24px rgba(37, 99, 235, 0.25);
+  }
+  .brand-name {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #0F172A;
+  }
+  .brand-sub {
+    font-size: 16px;
+    font-weight: 700;
+    color: #64748B;
+    letter-spacing: 0.06em;
+  }
+  .tag-pill {
+    padding: 10px 20px;
+    border-radius: 999px;
+    background: #FFFFFF;
+    border: 2px solid #E2E8F0;
+    font-size: 18px;
+    font-weight: 800;
+    color: #2563EB;
+    letter-spacing: 0.06em;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+  }
+  .speaker-bar {
+    position: absolute;
+    top: 164px;
+    left: 64px;
+    right: 64px;
+    display: flex;
+    justify-content: center;
+    z-index: 30;
+  }
+  .speaker-pill {
+    padding: 10px 26px;
+    border-radius: 999px;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    background: #FFFFFF;
+    border: 2px solid #10B981;
+    color: #047857;
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.14);
+  }
+  .speaker-pill.riya {
+    border-color: #6366F1;
+    color: #4338CA;
+    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.16);
+  }
+  .card-area {
+    position: absolute;
+    top: 245px;
+    left: 64px;
+    right: 64px;
+    height: 1120px;
+    z-index: 20;
+  }
+  .scene {
+    position: absolute;
+    inset: 0;
+    background: #FFFFFF;
+    border: 2px solid #E2E8F0;
+    border-radius: 40px;
+    padding: 64px 56px;
+    box-shadow: 0 28px 60px rgba(15, 23, 42, 0.08);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    opacity: 0;
+  }
+  .scene-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .scene-badge {
+    padding: 10px 20px;
+    border-radius: 12px;
+    background: #EFF6FF;
+    color: #1D4ED8;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+  .scene-num {
+    font-size: 22px;
+    font-weight: 800;
+    color: #94A3B8;
+  }
+  .scene-title {
+    font-size: 62px;
+    font-weight: 900;
+    line-height: 1.14;
+    letter-spacing: -0.03em;
+    color: #0F172A;
+    margin-top: 28px;
+  }
+  .scene-sub {
+    font-size: 30px;
+    font-weight: 600;
+    color: #475569;
+    margin-top: 18px;
+    line-height: 1.4;
+  }
+  .compare-box {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-top: 24px;
+  }
+  .price-card {
+    border-radius: 28px;
+    padding: 36px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .price-old {
+    background: #FEF2F2;
+    border: 2px solid #FECACA;
+  }
+  .price-new {
+    background: #ECFDF5;
+    border: 2px solid #A7F3D0;
+  }
+  .price-val {
+    font-size: 56px;
+    font-weight: 900;
+  }
+  .price-old .price-val { color: #DC2626; }
+  .price-new .price-val { color: #059669; }
+  .price-lbl {
+    font-size: 26px;
+    font-weight: 700;
+    color: #334155;
+  }
+  .hero-badge-box {
+    background: linear-gradient(135deg, #EEF2FF 0%, #F8FAFC 100%);
+    border: 2px solid #C7D2FE;
+    border-radius: 32px;
+    padding: 56px 40px;
+    text-align: center;
+  }
+  .hero-logo-txt {
+    font-size: 76px;
+    font-weight: 900;
+    background: linear-gradient(135deg, #2563EB, #7C3AED);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.03em;
+  }
+  .hero-org {
+    margin-top: 14px;
+    font-size: 28px;
+    font-weight: 800;
+    color: #4338CA;
+    letter-spacing: 0.08em;
+  }
+  .wave-card {
+    background: #F8FAFC;
+    border: 2px solid #E2E8F0;
+    border-radius: 28px;
+    padding: 48px 36px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+  }
+  .wave-bars {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    height: 180px;
+  }
+  .wbar {
+    width: 18px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #2563EB, #10B981);
+  }
+  .clip-pill {
+    padding: 14px 32px;
+    border-radius: 999px;
+    background: #0F172A;
+    color: #FFFFFF;
+    font-size: 28px;
+    font-weight: 800;
+  }
+  .terminal {
+    background: #0F172A;
+    border-radius: 28px;
+    padding: 36px;
+    color: #E2E8F0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 25px;
+    line-height: 1.65;
+    box-shadow: 0 20px 44px rgba(15, 23, 42, 0.22);
+  }
+  .term-dots {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .dot { width: 16px; height: 16px; border-radius: 50%; }
+  .d-red { background: #EF4444; }
+  .d-yel { background: #F59E0B; }
+  .d-grn { background: #10B981; }
+  .c-kw { color: #C084FC; }
+  .c-fn { color: #60A5FA; }
+  .c-str { color: #34D399; }
+  .c-cmt { color: #94A3B8; }
+  .perks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .perk-pill {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 26px 32px;
+    border-radius: 24px;
+    background: #F8FAFC;
+    border: 2px solid #E2E8F0;
+  }
+  .perk-dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #2563EB;
+    flex-shrink: 0;
+  }
+  .perk-title { font-size: 32px; font-weight: 800; color: #0F172A; }
+  .perk-sub { font-size: 24px; font-weight: 600; color: #64748B; margin-top: 4px; }
+  .cta-box {
+    background: linear-gradient(135deg, #2563EB, #4F46E5);
+    border-radius: 32px;
+    padding: 52px 40px;
+    text-align: center;
+    color: #FFFFFF;
+    box-shadow: 0 22px 44px rgba(37, 99, 235, 0.28);
+  }
+  .cta-main { font-size: 56px; font-weight: 900; letter-spacing: 0.02em; }
+  .cta-sub { font-size: 24px; font-weight: 700; opacity: 0.92; margin-top: 14px; }
+  .caption-box {
+    position: absolute;
+    bottom: 130px;
+    left: 64px;
+    right: 64px;
+    min-height: 220px;
+    background: #FFFFFF;
+    border: 2px solid #E2E8F0;
+    border-radius: 32px;
+    padding: 36px 42px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 14px 18px;
+    box-shadow: 0 20px 44px rgba(15, 23, 42, 0.08);
+    z-index: 30;
+  }
+  .cap-word {
+    font-size: 46px;
+    font-weight: 800;
+    color: #475569;
+    padding: 6px 14px;
+    border-radius: 14px;
+  }
+  .cap-word.active-rafi {
+    background: #10B981;
+    color: #FFFFFF;
+    transform: scale(1.06);
+  }
+  .cap-word.active-riya {
+    background: #4F46E5;
+    color: #FFFFFF;
+    transform: scale(1.06);
+  }
+</style>
+</head>
+<body>
+<div class="stage" data-composition-id="omnivoice-reel-en" data-width="1080" data-height="1920" data-fps="30" data-duration="35.3">
+  <div class="grid-bg"></div>
+  <audio id="voiceover-audio" src="assets/audio/omnivoice_en.mp3" data-start="0"></audio>
+  <audio id="bg-drone" src="assets/sfx/tech_drone.wav" data-start="0" data-volume="0.06"></audio>
+
+  <div class="header">
+    <div class="brand-left">
+      <div class="brand-icon">OV</div>
+      <div>
+        <div class="brand-name">OmniVoice</div>
+        <div class="brand-sub">k2-fsa · APPLE SILICON</div>
+      </div>
+    </div>
+    <div class="tag-pill">LOCAL AI VOICE</div>
+  </div>
+
+  <div class="speaker-bar">
+    <div class="speaker-pill" id="speaker-pill">RAFI · CREATOR</div>
+  </div>
+
+  <div class="card-area">
+    <div class="scene" id="scene-1">
+      <div>
+        <div class="scene-top">
+          <div class="scene-badge">COST TRAP</div>
+          <div class="scene-num">01 / 06</div>
+        </div>
+        <div class="scene-title">Still Paying Monthly<br>For AI Voice Cloning?</div>
+      </div>
+      <div class="compare-box">
+        <div class="price-card price-old">
+          <div>
+            <div class="price-lbl">Cloud Voice APIs</div>
+            <div class="scene-sub" style="margin-top:6px;font-size:24px;">Cloud API · Usage Caps</div>
+          </div>
+          <div class="price-val">$22 / mo</div>
+        </div>
+        <div class="price-card price-new">
+          <div>
+            <div class="price-lbl">OmniVoice Local</div>
+            <div class="scene-sub" style="margin-top:6px;font-size:24px;">100% Local on Apple Silicon</div>
+          </div>
+          <div class="price-val">$0.00 / mo</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scene" id="scene-2">
+      <div>
+        <div class="scene-top">
+          <div class="scene-badge">OPEN SOURCE</div>
+          <div class="scene-num">02 / 06</div>
+        </div>
+        <div class="scene-title">Meet OmniVoice<br>by k2-fsa</div>
+        <div class="scene-sub">Zero-Shot Voice Cloning · 600+ Languages</div>
+      </div>
+      <div class="hero-badge-box">
+        <div class="hero-logo-txt">k2-fsa / OmniVoice</div>
+        <div class="hero-org">600+ LANGUAGES · ZERO-SHOT CLONING</div>
+      </div>
+    </div>
+
+    <div class="scene" id="scene-3">
+      <div>
+        <div class="scene-top">
+          <div class="scene-badge">REFERENCE CLIP</div>
+          <div class="scene-num">03 / 06</div>
+        </div>
+        <div class="scene-title">Just 5–15 Seconds<br>Of Your Voice</div>
+        <div class="scene-sub">Record one clean mic sample — no studio needed</div>
+      </div>
+      <div class="wave-card">
+        <div class="wave-bars">
+          <div class="wbar" style="height:60px"></div>
+          <div class="wbar" style="height:120px"></div>
+          <div class="wbar" style="height:165px"></div>
+          <div class="wbar" style="height:95px"></div>
+          <div class="wbar" style="height:150px"></div>
+          <div class="wbar" style="height:175px"></div>
+          <div class="wbar" style="height:110px"></div>
+          <div class="wbar" style="height:140px"></div>
+          <div class="wbar" style="height:80px"></div>
+        </div>
+        <div class="clip-pill">5–15s Reference Audio (.wav / .mp3)</div>
+      </div>
+    </div>
+
+    <div class="scene" id="scene-4">
+      <div>
+        <div class="scene-top">
+          <div class="scene-badge">APPLE SILICON MPS</div>
+          <div class="scene-num">04 / 06</div>
+        </div>
+        <div class="scene-title">Run Locally In<br>3 Lines Of Python</div>
+      </div>
+      <div class="terminal">
+        <div class="term-dots"><div class="dot d-red"></div><div class="dot d-yel"></div><div class="dot d-grn"></div></div>
+        <div><span class="c-kw">from</span> omnivoice <span class="c-kw">import</span> OmniVoice</div>
+        <div>model = OmniVoice.<span class="c-fn">from_pretrained</span>(</div>
+        <div>&nbsp;&nbsp;<span class="c-str">"k2-fsa/OmniVoice"</span>,</div>
+        <div>&nbsp;&nbsp;device_map=<span class="c-str">"mps"</span></div>
+        <div>)</div>
+        <div><span class="c-cmt"># Clones locally on your Mac</span></div>
+        <div>wav = model.<span class="c-fn">generate</span>(text, ref_audio)</div>
+      </div>
+    </div>
+
+    <div class="scene" id="scene-5">
+      <div>
+        <div class="scene-top">
+          <div class="scene-badge">CAPABILITIES</div>
+          <div class="scene-num">05 / 06</div>
+        </div>
+        <div class="scene-title">600+ Languages.<br>Zero API Limits.</div>
+      </div>
+      <div class="perks-list">
+          <div class="perk-pill" id="perk-0">
+            <div class="perk-dot"></div>
+            <div>
+              <div class="perk-title">Zero-Shot Cloning</div>
+              <div class="perk-sub">5–15s reference audio</div>
+            </div>
+          </div>
+          <div class="perk-pill" id="perk-1">
+            <div class="perk-dot"></div>
+            <div>
+              <div class="perk-title">600+ Languages</div>
+              <div class="perk-sub">English, Bangla & more</div>
+            </div>
+          </div>
+          <div class="perk-pill" id="perk-2">
+            <div class="perk-dot"></div>
+            <div>
+              <div class="perk-title">Apple Silicon MPS</div>
+              <div class="perk-sub">Fast local inference</div>
+            </div>
+          </div>
+          <div class="perk-pill" id="perk-3">
+            <div class="perk-dot"></div>
+            <div>
+              <div class="perk-title">Whisper Word Sync</div>
+              <div class="perk-sub">Frame-accurate captions</div>
+            </div>
+          </div>
+      </div>
+    </div>
+
+    <div class="scene" id="scene-6">
+      <div>
+        <div class="scene-top">
+          <div class="scene-badge">GET THE SCRIPT</div>
+          <div class="scene-num">06 / 06</div>
+        </div>
+        <div class="scene-title">Run OmniVoice<br>On Your Mac Today</div>
+      </div>
+      <div class="cta-box">
+        <div class="cta-main">COMMENT "OMNI"</div>
+        <div class="cta-sub">WE’LL SEND YOU THE PYTHON SETUP SCRIPT</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="caption-box" id="caption-box"></div>
+</div>
+
+<script>
+const WORDS = [{"word": "Wait,", "start": 0.05, "end": 0.305, "speaker": "Rafi", "line_idx": 0, "g": 0}, {"word": "you", "start": 0.305, "end": 0.496, "speaker": "Rafi", "line_idx": 0, "g": 0}, {"word": "are", "start": 0.496, "end": 0.688, "speaker": "Rafi", "line_idx": 0, "g": 0}, {"word": "still", "start": 0.688, "end": 1.006, "speaker": "Rafi", "line_idx": 0, "g": 0}, {"word": "paying", "start": 1.006, "end": 1.389, "speaker": "Rafi", "line_idx": 0, "g": 1}, {"word": "monthly", "start": 1.389, "end": 1.835, "speaker": "Rafi", "line_idx": 0, "g": 1}, {"word": "subscriptions", "start": 1.835, "end": 2.664, "speaker": "Rafi", "line_idx": 0, "g": 1}, {"word": "just", "start": 2.664, "end": 2.919, "speaker": "Rafi", "line_idx": 0, "g": 1}, {"word": "to", "start": 2.919, "end": 3.046, "speaker": "Rafi", "line_idx": 0, "g": 2}, {"word": "clone", "start": 3.046, "end": 3.365, "speaker": "Rafi", "line_idx": 0, "g": 2}, {"word": "your", "start": 3.365, "end": 3.62, "speaker": "Rafi", "line_idx": 0, "g": 2}, {"word": "own", "start": 3.62, "end": 3.811, "speaker": "Rafi", "line_idx": 0, "g": 2}, {"word": "voice", "start": 3.811, "end": 4.13, "speaker": "Rafi", "line_idx": 0, "g": 3}, {"word": "for", "start": 4.13, "end": 4.321, "speaker": "Rafi", "line_idx": 0, "g": 3}, {"word": "reels?", "start": 4.321, "end": 4.64, "speaker": "Rafi", "line_idx": 0, "g": 3}, {"word": "Not", "start": 4.9, "end": 5.134, "speaker": "Riya", "line_idx": 1, "g": 4}, {"word": "anymore.", "start": 5.134, "end": 5.681, "speaker": "Riya", "line_idx": 1, "g": 4}, {"word": "Meet", "start": 5.681, "end": 5.994, "speaker": "Riya", "line_idx": 1, "g": 4}, {"word": "OmniVoice,", "start": 5.994, "end": 6.697, "speaker": "Riya", "line_idx": 1, "g": 4}, {"word": "an", "start": 6.697, "end": 6.854, "speaker": "Riya", "line_idx": 1, "g": 5}, {"word": "open-source", "start": 6.854, "end": 7.713, "speaker": "Riya", "line_idx": 1, "g": 5}, {"word": "voice", "start": 7.713, "end": 8.104, "speaker": "Riya", "line_idx": 1, "g": 5}, {"word": "cloning", "start": 8.104, "end": 8.651, "speaker": "Riya", "line_idx": 1, "g": 5}, {"word": "model", "start": 8.651, "end": 9.042, "speaker": "Riya", "line_idx": 1, "g": 6}, {"word": "from", "start": 9.042, "end": 9.354, "speaker": "Riya", "line_idx": 1, "g": 6}, {"word": "k2-fsa", "start": 9.354, "end": 9.823, "speaker": "Riya", "line_idx": 1, "g": 6}, {"word": "that", "start": 9.823, "end": 10.136, "speaker": "Riya", "line_idx": 1, "g": 6}, {"word": "runs", "start": 10.136, "end": 10.448, "speaker": "Riya", "line_idx": 1, "g": 7}, {"word": "100", "start": 10.448, "end": 10.683, "speaker": "Riya", "line_idx": 1, "g": 7}, {"word": "percent", "start": 10.683, "end": 11.23, "speaker": "Riya", "line_idx": 1, "g": 7}, {"word": "locally", "start": 11.23, "end": 11.777, "speaker": "Riya", "line_idx": 1, "g": 7}, {"word": "on", "start": 11.777, "end": 11.933, "speaker": "Riya", "line_idx": 1, "g": 8}, {"word": "your", "start": 11.933, "end": 12.246, "speaker": "Riya", "line_idx": 1, "g": 8}, {"word": "Mac.", "start": 12.246, "end": 12.48, "speaker": "Riya", "line_idx": 1, "g": 8}, {"word": "Hold", "start": 12.74, "end": 13.036, "speaker": "Rafi", "line_idx": 2, "g": 9}, {"word": "on,", "start": 13.036, "end": 13.183, "speaker": "Rafi", "line_idx": 2, "g": 9}, {"word": "how", "start": 13.183, "end": 13.405, "speaker": "Rafi", "line_idx": 2, "g": 9}, {"word": "much", "start": 13.405, "end": 13.7, "speaker": "Rafi", "line_idx": 2, "g": 9}, {"word": "audio", "start": 13.7, "end": 14.07, "speaker": "Rafi", "line_idx": 2, "g": 10}, {"word": "does", "start": 14.07, "end": 14.365, "speaker": "Rafi", "line_idx": 2, "g": 10}, {"word": "it", "start": 14.365, "end": 14.513, "speaker": "Rafi", "line_idx": 2, "g": 10}, {"word": "actually", "start": 14.513, "end": 15.104, "speaker": "Rafi", "line_idx": 2, "g": 10}, {"word": "need", "start": 15.104, "end": 15.4, "speaker": "Rafi", "line_idx": 2, "g": 11}, {"word": "to", "start": 15.4, "end": 15.547, "speaker": "Rafi", "line_idx": 2, "g": 11}, {"word": "sound", "start": 15.547, "end": 15.917, "speaker": "Rafi", "line_idx": 2, "g": 11}, {"word": "like", "start": 15.917, "end": 16.212, "speaker": "Rafi", "line_idx": 2, "g": 11}, {"word": "me?", "start": 16.212, "end": 16.36, "speaker": "Rafi", "line_idx": 2, "g": 12}, {"word": "Just", "start": 16.62, "end": 16.926, "speaker": "Riya", "line_idx": 3, "g": 13}, {"word": "a", "start": 16.926, "end": 17.079, "speaker": "Riya", "line_idx": 3, "g": 13}, {"word": "5", "start": 17.079, "end": 17.233, "speaker": "Riya", "line_idx": 3, "g": 13}, {"word": "to", "start": 17.233, "end": 17.386, "speaker": "Riya", "line_idx": 3, "g": 13}, {"word": "15", "start": 17.386, "end": 17.539, "speaker": "Riya", "line_idx": 3, "g": 14}, {"word": "second", "start": 17.539, "end": 17.998, "speaker": "Riya", "line_idx": 3, "g": 14}, {"word": "mic", "start": 17.998, "end": 18.228, "speaker": "Riya", "line_idx": 3, "g": 14}, {"word": "clip.", "start": 18.228, "end": 18.534, "speaker": "Riya", "line_idx": 3, "g": 14}, {"word": "Load", "start": 18.534, "end": 18.84, "speaker": "Riya", "line_idx": 3, "g": 15}, {"word": "OmniVoice", "start": 18.84, "end": 19.529, "speaker": "Riya", "line_idx": 3, "g": 15}, {"word": "in", "start": 19.529, "end": 19.683, "speaker": "Riya", "line_idx": 3, "g": 15}, {"word": "Python", "start": 19.683, "end": 20.142, "speaker": "Riya", "line_idx": 3, "g": 15}, {"word": "on", "start": 20.142, "end": 20.295, "speaker": "Riya", "line_idx": 3, "g": 16}, {"word": "Apple", "start": 20.295, "end": 20.678, "speaker": "Riya", "line_idx": 3, "g": 16}, {"word": "Silicon", "start": 20.678, "end": 21.214, "speaker": "Riya", "line_idx": 3, "g": 16}, {"word": "MPS,", "start": 21.214, "end": 21.444, "speaker": "Riya", "line_idx": 3, "g": 16}, {"word": "pass", "start": 21.444, "end": 21.75, "speaker": "Riya", "line_idx": 3, "g": 17}, {"word": "your", "start": 21.75, "end": 22.056, "speaker": "Riya", "line_idx": 3, "g": 17}, {"word": "text,", "start": 22.056, "end": 22.362, "speaker": "Riya", "line_idx": 3, "g": 17}, {"word": "and", "start": 22.362, "end": 22.592, "speaker": "Riya", "line_idx": 3, "g": 17}, {"word": "it", "start": 22.592, "end": 22.745, "speaker": "Riya", "line_idx": 3, "g": 18}, {"word": "clones", "start": 22.745, "end": 23.205, "speaker": "Riya", "line_idx": 3, "g": 18}, {"word": "your", "start": 23.205, "end": 23.511, "speaker": "Riya", "line_idx": 3, "g": 18}, {"word": "exact", "start": 23.511, "end": 23.894, "speaker": "Riya", "line_idx": 3, "g": 18}, {"word": "tone.", "start": 23.894, "end": 24.2, "speaker": "Riya", "line_idx": 3, "g": 19}, {"word": "And", "start": 24.46, "end": 24.705, "speaker": "Rafi", "line_idx": 4, "g": 20}, {"word": "it", "start": 24.705, "end": 24.868, "speaker": "Rafi", "line_idx": 4, "g": 20}, {"word": "works", "start": 24.868, "end": 25.276, "speaker": "Rafi", "line_idx": 4, "g": 20}, {"word": "across", "start": 25.276, "end": 25.766, "speaker": "Rafi", "line_idx": 4, "g": 20}, {"word": "600", "start": 25.766, "end": 26.011, "speaker": "Rafi", "line_idx": 4, "g": 21}, {"word": "plus", "start": 26.011, "end": 26.338, "speaker": "Rafi", "line_idx": 4, "g": 21}, {"word": "languages", "start": 26.338, "end": 27.072, "speaker": "Rafi", "line_idx": 4, "g": 21}, {"word": "with", "start": 27.072, "end": 27.399, "speaker": "Rafi", "line_idx": 4, "g": 21}, {"word": "zero", "start": 27.399, "end": 27.725, "speaker": "Rafi", "line_idx": 4, "g": 22}, {"word": "API", "start": 27.725, "end": 27.97, "speaker": "Rafi", "line_idx": 4, "g": 22}, {"word": "limits?", "start": 27.97, "end": 28.46, "speaker": "Rafi", "line_idx": 4, "g": 22}, {"word": "Zero", "start": 28.72, "end": 29.011, "speaker": "Riya", "line_idx": 5, "g": 23}, {"word": "limits", "start": 29.011, "end": 29.447, "speaker": "Riya", "line_idx": 5, "g": 23}, {"word": "and", "start": 29.447, "end": 29.665, "speaker": "Riya", "line_idx": 5, "g": 23}, {"word": "zero", "start": 29.665, "end": 29.956, "speaker": "Riya", "line_idx": 5, "g": 23}, {"word": "cloud", "start": 29.956, "end": 30.32, "speaker": "Riya", "line_idx": 5, "g": 24}, {"word": "uploads.", "start": 30.32, "end": 30.828, "speaker": "Riya", "line_idx": 5, "g": 24}, {"word": "Want", "start": 30.828, "end": 31.119, "speaker": "Riya", "line_idx": 5, "g": 24}, {"word": "the", "start": 31.119, "end": 31.337, "speaker": "Riya", "line_idx": 5, "g": 24}, {"word": "exact", "start": 31.337, "end": 31.701, "speaker": "Riya", "line_idx": 5, "g": 25}, {"word": "Python", "start": 31.701, "end": 32.137, "speaker": "Riya", "line_idx": 5, "g": 25}, {"word": "script", "start": 32.137, "end": 32.573, "speaker": "Riya", "line_idx": 5, "g": 25}, {"word": "to", "start": 32.573, "end": 32.719, "speaker": "Riya", "line_idx": 5, "g": 25}, {"word": "run", "start": 32.719, "end": 32.937, "speaker": "Riya", "line_idx": 5, "g": 26}, {"word": "it", "start": 32.937, "end": 33.082, "speaker": "Riya", "line_idx": 5, "g": 26}, {"word": "on", "start": 33.082, "end": 33.228, "speaker": "Riya", "line_idx": 5, "g": 26}, {"word": "your", "start": 33.228, "end": 33.519, "speaker": "Riya", "line_idx": 5, "g": 26}, {"word": "Mac?", "start": 33.519, "end": 33.737, "speaker": "Riya", "line_idx": 5, "g": 27}, {"word": "Comment", "start": 33.737, "end": 34.246, "speaker": "Riya", "line_idx": 5, "g": 27}, {"word": "OMNI", "start": 34.246, "end": 34.536, "speaker": "Riya", "line_idx": 5, "g": 27}, {"word": "below.", "start": 34.536, "end": 34.9, "speaker": "Riya", "line_idx": 5, "g": 27}];
+const SPANS = [{"idx": 0, "speaker": "Rafi", "start": 0.0, "end": 4.69, "text": "Wait, you are still paying monthly subscriptions just to clone your own voice for reels?"}, {"idx": 1, "speaker": "Riya", "start": 4.85, "end": 12.53, "text": "Not anymore. Meet OmniVoice, an open-source voice cloning model from k2-fsa that runs 100 percent locally on your Mac."}, {"idx": 2, "speaker": "Rafi", "start": 12.69, "end": 16.41, "text": "Hold on, how much audio does it actually need to sound like me?"}, {"idx": 3, "speaker": "Riya", "start": 16.57, "end": 24.25, "text": "Just a 5 to 15 second mic clip. Load OmniVoice in Python on Apple Silicon MPS, pass your text, and it clones your exact tone."}, {"idx": 4, "speaker": "Rafi", "start": 24.41, "end": 28.51, "text": "And it works across 600 plus languages with zero API limits?"}, {"idx": 5, "speaker": "Riya", "start": 28.67, "end": 34.95, "text": "Zero limits and zero cloud uploads. Want the exact Python script to run it on your Mac? Comment OMNI below."}];
+const RAFI_LABEL = "RAFI \u00b7 CREATOR";
+const RIYA_LABEL = "RIYA \u00b7 AI MENTOR";
+
+const capBox = document.getElementById('caption-box');
+const speakerPill = document.getElementById('speaker-pill');
+
+let lastGroup = -1;
+function updateHUD(t) {
+  let activeSpan = SPANS[0];
+  for (let i = 0; i < SPANS.length; i++) {
+    if (t >= SPANS[i].start) activeSpan = SPANS[i];
+  }
+  if (activeSpan.speaker === 'Riya') {
+    speakerPill.textContent = RIYA_LABEL;
+    speakerPill.className = 'speaker-pill riya';
+  } else {
+    speakerPill.textContent = RAFI_LABEL;
+    speakerPill.className = 'speaker-pill';
+  }
+
+  let activeWord = null;
+  for (let i = 0; i < WORDS.length; i++) {
+    if (t >= WORDS[i].start && t <= WORDS[i].end + 0.12) {
+      activeWord = WORDS[i];
+      break;
+    }
+  }
+  if (!activeWord) {
+    for (let i = WORDS.length - 1; i >= 0; i--) {
+      if (t >= WORDS[i].start) {
+        activeWord = WORDS[i];
+        break;
+      }
+    }
+  }
+  if (!activeWord) activeWord = WORDS[0];
+
+  const grp = activeWord.g;
+  if (grp !== lastGroup) {
+    lastGroup = grp;
+    const grpWords = WORDS.filter(w => w.g === grp);
+    capBox.innerHTML = '';
+    grpWords.forEach((w, idx) => {
+      const el = document.createElement('span');
+      el.className = 'cap-word';
+      el.textContent = w.word;
+      el.dataset.idx = idx;
+      capBox.appendChild(el);
+    });
+  }
+  const grpWords = WORDS.filter(w => w.g === grp);
+  const children = capBox.children;
+  for (let i = 0; i < grpWords.length; i++) {
+    const w = grpWords[i];
+    const el = children[i];
+    if (!el) continue;
+    const isCurrent = (t >= w.start && t <= w.end + 0.08);
+    el.className = 'cap-word' + (isCurrent ? (w.speaker === 'Riya' ? ' active-riya' : ' active-rafi') : '');
+  }
+}
+
+const tl = gsap.timeline({
+  paused: true,
+  onUpdate: function() { updateHUD(this.time()); }
+});
+
+const scenes = ['#scene-1', '#scene-2', '#scene-3', '#scene-4', '#scene-5', '#scene-6'];
+const times = [0.0, 4.85, 12.69, 16.57, 24.41, 28.67];
+
+scenes.forEach((sel, i) => {
+  const tStart = times[i];
+  tl.fromTo(sel, { opacity: 0, y: 28, scale: 0.97 }, { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: 'power3.out' }, tStart);
+  if (i < scenes.length - 1) {
+    tl.to(sel, { opacity: 0, y: -20, duration: 0.25, ease: 'power2.in' }, times[i + 1] - 0.15);
+  }
+});
+
+tl.to({}, { duration: 0.1 }, 35.3);
+updateHUD(0);
+
+window.__timelines = window.__timelines || {};
+window.__timelines["omnivoice-reel-en"] = tl;
+</script>
+</body>
+</html>
