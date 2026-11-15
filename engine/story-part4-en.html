@@ -2,436 +2,960 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>antigravity-story-part4-en</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+<title>story-part4-en</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&family=JetBrains+Mono:wght@600;700;800&family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet" />
 <script src="assets/js/gsap.min.js"></script>
+<script src="assets/js/three.min.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body {
     width: 1080px;
     height: 1920px;
     overflow: hidden;
-    background: #F7F5F0;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    color: #18181B;
+    background: #F8FAFC;
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: #0F172A;
   }
   .stage {
     position: relative;
     width: 1080px;
     height: 1920px;
-    background: radial-gradient(circle at 18% 12%, #FFF7ED 0%, #F7F5F0 46%, #EEF2FF 100%);
+    background:
+      radial-gradient(circle at 20% 15%, rgba(37, 99, 235, 0.14) 0%, transparent 45%),
+      radial-gradient(circle at 80% 75%, rgba(124, 58, 237, 0.13) 0%, transparent 48%),
+      linear-gradient(180deg, #F8FAFC 0%, #EEF2FF 52%, #F8FAFC 100%);
     overflow: hidden;
-    perspective: 1400px;
-    transform-style: preserve-3d;
   }
-  .dot-grid {
+  .bg-grid {
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(rgba(24, 24, 27, 0.11) 1.5px, transparent 1.5px);
-    background-size: 36px 36px;
+    background-image: radial-gradient(rgba(15, 23, 42, 0.10) 1.5px, transparent 1.5px);
+    background-size: 38px 38px;
     pointer-events: none;
   }
-  .orb {
+  #three-canvas {
     position: absolute;
-    border-radius: 999px;
-    filter: blur(80px);
-    opacity: 0.45;
+    inset: 0;
+    width: 1080px;
+    height: 1920px;
     pointer-events: none;
+    z-index: 25;
   }
-  .orb-1 { width: 520px; height: 520px; background: #FDBA74; top: -120px; right: -120px; }
-  .orb-2 { width: 480px; height: 480px; background: #A5B4FC; bottom: 180px; left: -140px; }
 
-  .header {
+  /* MANDATORY INSTAGRAM REELS SAFE ZONE: x=90..900 (width 810), y=220..1550 (height 1330) */
+  .safe-zone {
     position: absolute;
-    top: 68px;
-    left: 64px;
-    right: 64px;
+    left: 90px;
+    top: 220px;
+    width: 810px;
+    height: 1330px;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .safe-zone-guide {
+    position: absolute;
+    left: 90px;
+    top: 220px;
+    width: 810px;
+    height: 1330px;
+    border: 3px dashed #2563EB;
+    background: rgba(37, 99, 235, 0.03);
+    z-index: 999;
+    pointer-events: none;
+    display: none;
+  }
+
+  /* Top Series Header inside Safe Zone (Light Theme) */
+  .series-header {
+    width: 100%;
+    background: #FFFFFF;
+    border: 2.5px solid #0F172A;
+    border-radius: 24px;
+    padding: 18px 24px;
+    box-shadow: 0 8px 0 #0F172A, 0 18px 36px rgba(15, 23, 42, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .sh-top {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    z-index: 30;
   }
-  .brand-left { display: flex; align-items: center; gap: 16px; }
-  .brand-logo {
-    width: 60px; height: 60px; border-radius: 16px;
-    border: 2.5px solid #18181B;
-    box-shadow: 0 6px 0 #18181B;
+  .sh-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
   }
-  .brand-name { font-size: 26px; font-weight: 900; letter-spacing: -0.02em; }
-  .brand-sub { font-size: 15px; font-weight: 800; color: #EA580C; letter-spacing: 0.08em; }
-  .part-pill {
-    padding: 12px 24px;
+  .sh-logo {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    border: 2px solid #0F172A;
+  }
+  .sh-series {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    color: #2563EB;
+  }
+  .sh-ep-pill {
+    padding: 6px 16px;
     border-radius: 999px;
-    background: #18181B;
+    background: linear-gradient(90deg, #2563EB, #7C3AED);
     color: #FFFFFF;
-    font-size: 20px;
-    font-weight: 900;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    font-weight: 800;
     letter-spacing: 0.08em;
-    box-shadow: 0 8px 20px rgba(24, 24, 27, 0.18);
+  }
+  .sh-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .sh-title {
+    font-family: 'Space Grotesk', 'Inter', sans-serif;
+    font-size: 24px;
+    font-weight: 800;
+    color: #0F172A;
+    letter-spacing: -0.01em;
+  }
+  .sh-narrator {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 800;
+    color: #2563EB;
+    padding: 5px 14px;
+    border-radius: 999px;
+    background: #EFF6FF;
+    border: 1.5px solid #2563EB;
   }
 
-  .speaker-wrap {
-    position: absolute;
-    top: 166px;
-    left: 64px;
-    z-index: 30;
+  /* 3D Viewport Indicator strip inside Safe Zone */
+  .three-stage-banner {
+    width: 100%;
+    height: 175px;
+    border-radius: 22px;
+    border: 2.5px solid #0F172A;
+    background: linear-gradient(135deg, #EFF6FF 0%, #F5F3FF 50%, #ECFEFF 100%);
+    box-shadow: 0 6px 0 #0F172A;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 12px 18px;
   }
-  .speaker-pill {
-    display: inline-flex;
+  .three-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    color: #0F172A;
+    background: rgba(255, 255, 255, 0.90);
+    padding: 5px 12px;
+    border-radius: 999px;
+    border: 1.5px solid #0F172A;
+  }
+
+  /* Scene Container inside Safe Zone */
+  .scenes-wrap {
+    position: relative;
+    width: 100%;
+    height: 670px;
+  }
+  .scene {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    opacity: 0;
+  }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    color: #FFFFFF;
+    background: #2563EB;
+    border: 2px solid #0F172A;
+    box-shadow: 0 4px 0 #0F172A;
+    padding: 8px 20px;
+    border-radius: 999px;
+  }
+  .card {
+    width: 100%;
+    background: #FFFFFF;
+    border: 2.5px solid #0F172A;
+    border-radius: 28px;
+    padding: 34px 30px;
+    box-shadow: 0 12px 0 #0F172A, 0 24px 48px rgba(15, 23, 42, 0.10);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-card {
+    background: linear-gradient(155deg, #FFFFFF 0%, #EFF6FF 100%);
+    border-color: #0F172A;
+  }
+  .light-sweep {
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 80%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(37, 99, 235, 0.10), transparent);
+    transform: skewX(-20deg);
+    pointer-events: none;
+  }
+  .kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    color: #7C3AED;
+  }
+  .headline-lg {
+    font-family: 'Space Grotesk', 'Inter', sans-serif;
+    font-size: 46px;
+    font-weight: 900;
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    color: #0F172A;
+  }
+  .headline-md {
+    font-family: 'Space Grotesk', 'Inter', sans-serif;
+    font-size: 34px;
+    font-weight: 800;
+    line-height: 1.18;
+    color: #0F172A;
+  }
+  .subtext {
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1.38;
+    color: #475569;
+    max-width: 730px;
+  }
+  .txt-cyan { color: #2563EB; }
+
+  .price-hero {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+  }
+  .price-strike {
+    font-size: 44px;
+    font-weight: 800;
+    color: #94A3B8;
+    text-decoration: line-through;
+  }
+  .price-arrow {
+    font-size: 38px;
+    font-weight: 900;
+    color: #2563EB;
+  }
+  .price-glow {
+    font-size: 76px;
+    font-weight: 900;
+    color: #2563EB;
+  }
+
+  .logo-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
+  .logo-box {
+    width: 78px;
+    height: 78px;
+    padding: 12px;
+    border-radius: 20px;
+    background: #F8FAFC;
+    border: 2.5px solid #0F172A;
+    box-shadow: 0 5px 0 #0F172A;
+    object-fit: contain;
+  }
+  .conn-line {
+    width: 48px;
+    height: 4px;
+    background: linear-gradient(90deg, #2563EB, #7C3AED);
+    border-radius: 99px;
+  }
+
+  .pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+  .tech-pill {
+    padding: 10px 20px;
+    border-radius: 999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 800;
+  }
+  .tech-pill.blue { background: #EFF6FF; border: 2px solid #2563EB; color: #1D4ED8; }
+  .tech-pill.cyan { background: #F0F9FF; border: 2px solid #0284C7; color: #0369A1; }
+  .tech-pill.violet { background: #F5F3FF; border: 2px solid #7C3AED; color: #6D28D9; }
+
+  /* Terminal Window (Clean Dark-Contrast Terminal Card on Light Canvas) */
+  .term-window {
+    width: 100%;
+    border-radius: 24px;
+    background: #0F172A;
+    border: 2.5px solid #0F172A;
+    overflow: hidden;
+    box-shadow: 0 10px 0 #2563EB, 0 20px 44px rgba(15, 23, 42, 0.16);
+  }
+  .term-header {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 14px 20px;
+    background: #1E293B;
+    border-bottom: 1.5px solid #334155;
+  }
+  .tdot { width: 13px; height: 13px; border-radius: 99px; }
+  .tdot.r { background: #EF4444; }
+  .tdot.y { background: #F59E0B; }
+  .tdot.g { background: #22C55E; }
+  .term-title {
+    margin-left: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    color: #CBD5E1;
+  }
+  .term-body {
+    padding: 24px 26px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 20px;
+    line-height: 1.65;
+    text-align: left;
+    color: #F8FAFC;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .tprompt { color: #38BDF8; font-weight: 800; }
+  .tline.cyan { color: #38BDF8; }
+  .tline.ok { color: #4ADE80; font-weight: 800; }
+
+  .icon-bar {
+    display: flex;
+    gap: 18px;
+    justify-content: center;
+  }
+  .ico-chip {
+    display: flex;
     align-items: center;
     gap: 10px;
-    padding: 10px 22px;
+    padding: 10px 20px;
+    border-radius: 16px;
+    background: #FFFFFF;
+    border: 2px solid #0F172A;
+    box-shadow: 0 5px 0 #0F172A;
+    font-size: 18px;
+    font-weight: 800;
+    color: #0F172A;
+  }
+  .ico-chip img { width: 28px; height: 28px; object-fit: contain; }
+
+  .diagram-grid {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+    justify-content: center;
+  }
+  .diag-node {
+    flex: 1;
+    padding: 18px 14px;
+    border-radius: 20px;
+    background: #F8FAFC;
+    border: 2px solid #CBD5E1;
+    text-align: center;
+  }
+  .diag-node.active {
+    border-color: #2563EB;
+    background: #EFF6FF;
+    box-shadow: 0 5px 0 #2563EB;
+  }
+  .diag-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 26px;
+    font-weight: 900;
+    color: #2563EB;
+  }
+  .diag-lbl {
+    font-size: 17px;
+    font-weight: 800;
+    color: #0F172A;
+    margin-top: 4px;
+  }
+
+  .flow-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .flow-box {
+    padding: 14px 22px;
+    border-radius: 16px;
+    background: #F8FAFC;
+    border: 2px solid #0F172A;
+    font-size: 20px;
+    font-weight: 800;
+    color: #0F172A;
+  }
+  .flow-box.highlight {
+    background: #2563EB;
+    border-color: #0F172A;
+    color: #FFFFFF;
+    box-shadow: 0 5px 0 #0F172A;
+  }
+  .flow-arr {
+    font-size: 26px;
+    font-weight: 900;
+    color: #2563EB;
+  }
+
+  /* Aayojon Screenshots */
+  .screenshot-grid {
+    display: flex;
+    gap: 14px;
+    width: 100%;
+    justify-content: center;
+  }
+  .shot-card {
+    flex: 1;
+    background: #F8FAFC;
+    border: 2px solid #0F172A;
+    box-shadow: 0 5px 0 #0F172A;
+    border-radius: 16px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .shot-card img {
+    width: 100%;
+    height: 155px;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+  .shot-card span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 800;
+    color: #2563EB;
+  }
+
+  .arch-svg {
+    width: 100%;
+    max-width: 720px;
+    height: auto;
+  }
+
+  /* AWS SBG DIU Showcase */
+  .sbg-showcase {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    width: 100%;
+    text-align: left;
+  }
+  .sbg-poster {
+    width: 240px;
+    height: 240px;
+    object-fit: cover;
+    border-radius: 18px;
+    border: 2.5px solid #0F172A;
+    box-shadow: 0 6px 0 #0F172A;
+  }
+  .sbg-meta {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .diu-logo {
+    height: 54px;
+    width: auto;
+    object-fit: contain;
+    align-self: flex-start;
+    background: #F8FAFC;
+    border: 1.5px solid #CBD5E1;
+    padding: 6px 12px;
+    border-radius: 10px;
+  }
+  .sbg-title {
+    font-size: 30px;
+    font-weight: 900;
+    color: #0F172A;
+  }
+  .sbg-sub {
+    font-size: 19px;
+    font-weight: 700;
+    color: #2563EB;
+    line-height: 1.35;
+  }
+
+  /* Pipeline Steps (Ep 4) */
+  .pipe-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+  }
+  .pipe-step {
+    padding: 16px;
+    border-radius: 16px;
+    background: #F8FAFC;
+    border: 2px solid #0F172A;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    font-weight: 800;
+    color: #0F172A;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .pipe-step span {
+    color: #2563EB;
+    font-size: 15px;
+  }
+  .pipe-step.active {
+    border-color: #2563EB;
+    background: #EFF6FF;
+    box-shadow: 0 4px 0 #2563EB;
+  }
+
+  /* Ep 5 Mini Grid & Waveform */
+  .ep-mini-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+  }
+  .ep-mini {
+    padding: 14px 18px;
+    border-radius: 16px;
+    background: #F8FAFC;
+    border: 2px solid #0F172A;
+    font-size: 19px;
+    font-weight: 800;
+    color: #0F172A;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .ep-mini span {
+    font-family: 'JetBrains Mono', monospace;
+    color: #2563EB;
+  }
+  .wave-viz {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    height: 84px;
+  }
+  .wbar {
+    width: 14px;
+    height: 36px;
+    border-radius: 99px;
+    background: linear-gradient(180deg, #0284C7, #2563EB, #7C3AED);
+  }
+  .wbar:nth-child(2n) { height: 74px; }
+  .wbar:nth-child(3n) { height: 54px; }
+
+  .ep-timeline-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .ep-dot {
+    width: 44px;
+    height: 44px;
+    border-radius: 99px;
+    background: #F8FAFC;
+    border: 2px solid #0F172A;
+    color: #0F172A;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 800;
+  }
+  .ep-dot.active {
+    background: #2563EB;
+    border-color: #0F172A;
+    color: #FFFFFF;
+  }
+  .ep-bar {
+    width: 34px;
+    height: 3px;
+    background: #2563EB;
+  }
+
+  /* Teaser / CTA Card */
+  .teaser-card {
+    border-color: #0F172A;
+    background: linear-gradient(155deg, #EFF6FF 0%, #F5F3FF 100%);
+  }
+  .teaser-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    color: #7C3AED;
+  }
+  .cta-pill {
+    margin-top: 4px;
+    padding: 14px 30px;
     border-radius: 999px;
-    background: #ECFDF5;
-    border: 2px solid #16A34A;
-    color: #15803D;
+    background: linear-gradient(90deg, #2563EB, #7C3AED);
+    border: 2px solid #0F172A;
+    box-shadow: 0 5px 0 #0F172A;
+    color: #FFFFFF;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 18px;
     font-weight: 800;
     letter-spacing: 0.06em;
   }
 
-  .scene {
-    position: absolute;
-    top: 250px;
-    left: 64px;
-    right: 64px;
-    bottom: 400px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 28px;
-    opacity: 0;
-    transform-style: preserve-3d;
-  }
-  .eyebrow {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    color: #EA580C;
-    background: #FFF7ED;
-    border: 2px solid #FDBA74;
-    padding: 10px 22px;
-    border-radius: 999px;
-  }
-  .hero-card, .glass-card, .terminal-card, .cta-card, .wave-card {
+  /* Subtitles & Progress strictly inside Safe Zone bottom (y <= 1550px) */
+  .hud-bottom {
     width: 100%;
-    background: #FFFFFF;
-    border: 3px solid #18181B;
-    border-radius: 36px;
-    padding: 52px 44px;
-    box-shadow: 0 14px 0 #18181B, 0 32px 64px rgba(24, 24, 27, 0.12);
     display: flex;
     flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 24px;
-  }
-  .sub-card {
-    font-size: 28px;
-    font-weight: 700;
-    color: #3F3F46;
-    text-align: center;
-    line-height: 1.35;
-    max-width: 820px;
-  }
-  .logo-row { display: flex; align-items: center; gap: 26px; }
-  .logo-lg { width: 96px; height: 96px; border-radius: 22px; object-fit: contain; }
-  .logo-md { width: 84px; height: 84px; object-fit: contain; }
-  .plus-sign { font-size: 42px; font-weight: 900; color: #71717A; }
-  .price-compare { display: flex; align-items: center; gap: 24px; }
-  .old-price { font-size: 56px; font-weight: 900; color: #A1A1AA; text-decoration: line-through; }
-  .arrow-right { font-size: 46px; font-weight: 900; color: #EA580C; }
-  .new-price { font-size: 86px; font-weight: 900; color: #16A34A; letter-spacing: -0.03em; }
-  .stat-big { font-size: 88px; font-weight: 900; letter-spacing: -0.03em; color: #18181B; line-height: 1; }
-  .stat-big.orange { color: #EA580C; }
-  .stat-big.indigo { color: #4F46E5; }
-  .stat-big.green { color: #16A34A; }
-  .card-title { font-size: 42px; font-weight: 900; letter-spacing: -0.02em; line-height: 1.15; }
-  .stat-mini { font-size: 25px; font-weight: 600; color: #52525B; line-height: 1.35; }
-
-  .badge-green {
-    background: #16A34A; color: #FFFFFF;
-    padding: 14px 30px; border-radius: 999px;
-    font-size: 22px; font-weight: 900; letter-spacing: 0.06em;
-  }
-  .badge-dark {
-    background: #18181B; color: #FFFFFF;
-    padding: 14px 30px; border-radius: 999px;
-    font-size: 22px; font-weight: 900; letter-spacing: 0.06em;
-  }
-
-  .chip-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; }
-  .chip {
-    padding: 16px 26px;
-    border-radius: 20px;
-    background: #F4F4F5;
-    border: 2px solid #18181B;
-    font-size: 24px;
-    font-weight: 800;
-  }
-
-  .vs-stack { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 18px; }
-  .vs-card {
-    width: 100%; padding: 36px; border-radius: 30px;
-    border: 3px solid #18181B; text-align: center;
-    background: #FFFFFF; box-shadow: 0 10px 0 #18181B;
-  }
-  .vs-card.muted { background: #F4F4F5; color: #71717A; }
-  .vs-card.highlight { background: #ECFDF5; border-color: #16A34A; box-shadow: 0 10px 0 #16A34A; }
-  .vs-label { font-size: 18px; font-weight: 800; letter-spacing: 0.1em; }
-  .vs-val { font-size: 64px; font-weight: 900; margin: 6px 0; }
-  .vs-sub { font-size: 24px; font-weight: 600; }
-  .vs-badge {
-    width: 68px; height: 68px; border-radius: 999px;
-    background: #EA580C; color: #FFFFFF; border: 3px solid #18181B;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 24px; font-weight: 900;
-  }
-
-  .terminal-card { padding: 0; overflow: hidden; align-items: stretch; text-align: left; background: #18181B; color: #F4F4F5; }
-  .term-bar {
-    display: flex; align-items: center; gap: 10px;
-    padding: 20px 28px; background: #27272A; border-bottom: 2px solid #3F3F46;
-  }
-  .dot { width: 16px; height: 16px; border-radius: 999px; }
-  .dot.r { background: #EF4444; } .dot.y { background: #F59E0B; } .dot.g { background: #22C55E; }
-  .term-title { font-family: 'JetBrains Mono', monospace; font-size: 18px; color: #A1A1AA; margin-left: 10px; }
-  .term-body { padding: 36px 34px; font-family: 'JetBrains Mono', monospace; font-size: 26px; line-height: 1.65; }
-  .prompt { color: #FB923C; font-weight: 700; }
-  .term-line.ok { color: #4ADE80; font-weight: 700; margin-top: 8px; }
-
-  .icon-strip { display: flex; align-items: center; justify-content: center; gap: 28px; margin-top: 8px; }
-  .tool-ico {
-    width: 84px; height: 84px; padding: 14px;
-    background: #FFFFFF; border: 2.5px solid #18181B; border-radius: 22px;
-    box-shadow: 0 6px 0 #18181B; object-fit: contain;
-  }
-
-  .pipe-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; justify-content: center; }
-  .pipe-pill {
-    padding: 16px 28px; border-radius: 18px;
-    background: #FFF7ED; border: 2.5px solid #EA580C; color: #EA580C;
-    font-size: 28px; font-weight: 900;
-  }
-  .pipe-pill.dark { background: #18181B; border-color: #18181B; color: #FFFFFF; }
-  .pipe-arrow { font-size: 32px; font-weight: 900; color: #71717A; }
-
-  .phone-frame {
-    width: 500px; padding: 16px; background: #18181B; border-radius: 42px;
-    box-shadow: 0 24px 60px rgba(24, 24, 27, 0.25);
-  }
-  .phone-img { width: 100%; border-radius: 28px; display: block; }
-
-  .kbd-row { display: flex; align-items: center; gap: 16px; font-size: 32px; font-weight: 900; }
-  .kbd {
-    padding: 16px 30px; border-radius: 18px;
-    background: #F4F4F5; border: 3px solid #18181B;
-    box-shadow: 0 8px 0 #18181B; font-family: 'JetBrains Mono', monospace; font-size: 30px;
-  }
-
-  .wave-bars { display: flex; align-items: center; gap: 14px; height: 110px; }
-  .wave-bars .bar {
-    width: 18px; border-radius: 999px; background: linear-gradient(180deg, #16A34A, #4F46E5);
-    height: 44px;
-  }
-  .wave-bars .bar:nth-child(2n) { height: 86px; }
-  .wave-bars .bar:nth-child(3n) { height: 64px; }
-
-  .cta-card { background: #18181B; color: #FFFFFF; border-color: #18181B; box-shadow: 0 16px 0 #EA580C; }
-  .cta-tag { font-family: 'JetBrains Mono', monospace; font-size: 20px; color: #FB923C; font-weight: 700; letter-spacing: 0.1em; }
-  .cta-title { font-size: 56px; font-weight: 900; letter-spacing: -0.02em; line-height: 1.1; }
-  .cta-sub { font-size: 26px; font-weight: 600; color: #D4D4D8; }
-  .cta-btn {
-    margin-top: 8px; padding: 20px 40px; border-radius: 999px;
-    background: #EA580C; color: #FFFFFF; font-size: 26px; font-weight: 900; letter-spacing: 0.04em;
-  }
-
-  .caption-wrap {
-    position: absolute;
-    bottom: 130px;
-    left: 64px;
-    right: 64px;
-    display: flex;
-    justify-content: center;
-    z-index: 40;
+    gap: 16px;
   }
   .caption-box {
+    width: 100%;
+    min-height: 132px;
+    padding: 18px 24px;
+    border-radius: 22px;
+    background: #FFFFFF;
+    border: 2.5px solid #0F172A;
+    box-shadow: 0 8px 0 #0F172A, 0 14px 34px rgba(15, 23, 42, 0.12);
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     justify-content: center;
-    gap: 12px 14px;
-    padding: 22px 32px;
-    border-radius: 28px;
-    background: rgba(24, 24, 27, 0.94);
-    box-shadow: 0 18px 40px rgba(24, 24, 27, 0.28);
-    max-width: 940px;
+    gap: 10px 12px;
   }
   .cap-word {
-    font-size: 38px;
+    font-size: 34px;
     font-weight: 800;
-    color: #E4E4E7;
+    color: #0F172A;
     padding: 4px 10px;
-    border-radius: 12px;
+    border-radius: 10px;
+    line-height: 1.18;
+  }
+  .cap-word.kw {
+    color: #2563EB;
   }
   .cap-word.active {
-    background: #EA580C;
+    background: #2563EB;
     color: #FFFFFF;
-    transform: scale(1.07);
+    box-shadow: 0 4px 0 #0F172A;
   }
-
   .progress-track {
-    position: absolute;
-    bottom: 64px;
-    left: 64px;
-    right: 64px;
+    width: 100%;
     height: 10px;
     border-radius: 999px;
-    background: rgba(24, 24, 27, 0.12);
+    background: #E2E8F0;
+    border: 1.5px solid #0F172A;
     overflow: hidden;
-    z-index: 40;
   }
   .progress-fill {
     height: 100%;
     width: 0%;
-    background: linear-gradient(90deg, #EA580C, #16A34A);
+    background: linear-gradient(90deg, #2563EB, #0284C7, #7C3AED);
     border-radius: 999px;
   }
 </style>
 </head>
 <body>
 <div id="root"
-     data-composition-id="antigravity-story-part4-en"
+     data-composition-id="story-part4-en"
      data-width="1080"
      data-height="1920"
      data-fps="30"
-     data-duration="31.04">
+     data-duration="44.53">
 
   <audio id="vo-main" src="assets/audio/story_part4_en.mp3" data-start="0.0" volume="1.0"></audio>
   <audio id="sfx-bed" src="assets/sfx/tech_drone.wav" data-start="0.0" volume="0.05"></audio>
   <audio id="sfx-impact-1" src="assets/sfx/impact.wav" data-start="0.0" volume="0.22"></audio>
-  <audio id="sfx-whoosh-2" src="assets/sfx/real/whoosh.wav" data-start="4.52" volume="0.28"></audio>
-  <audio id="sfx-pop-2" src="assets/sfx/real/pop.wav" data-start="4.77" volume="0.26"></audio>
-  <audio id="sfx-whoosh-3" src="assets/sfx/real/whoosh.wav" data-start="9.86" volume="0.28"></audio>
-  <audio id="sfx-click-3" src="assets/sfx/real/click.wav" data-start="10.08" volume="0.24"></audio>
-  <audio id="sfx-whoosh-4" src="assets/sfx/real/whoosh.wav" data-start="14.54" volume="0.28"></audio>
-  <audio id="sfx-pop-4" src="assets/sfx/real/pop.wav" data-start="14.79" volume="0.26"></audio>
-  <audio id="sfx-whoosh-5" src="assets/sfx/real/whoosh.wav" data-start="19.75" volume="0.28"></audio>
-  <audio id="sfx-chime-6" src="assets/sfx/real/chime.wav" data-start="25.83" volume="0.34"></audio>
+  <audio id="sfx-whoosh-2" src="assets/sfx/real/whoosh.wav" data-start="5.43" volume="0.26"></audio>
+  <audio id="sfx-pop-2" src="assets/sfx/real/pop.wav" data-start="5.68" volume="0.24"></audio>
+  <audio id="sfx-whoosh-3" src="assets/sfx/real/whoosh.wav" data-start="13.55" volume="0.26"></audio>
+  <audio id="sfx-click-3" src="assets/sfx/real/click.wav" data-start="13.77" volume="0.22"></audio>
+  <audio id="sfx-whoosh-4" src="assets/sfx/real/whoosh.wav" data-start="24.19" volume="0.26"></audio>
+  <audio id="sfx-whoosh-5" src="assets/sfx/real/whoosh.wav" data-start="30.49" volume="0.26"></audio>
+  <audio id="sfx-chime-6" src="assets/sfx/real/chime.wav" data-start="37.23" volume="0.32"></audio>
 
   <div class="stage">
-    <div class="dot-grid"></div>
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
+    <div class="bg-grid"></div>
+    <canvas id="three-canvas" width="1080" height="1920"></canvas>
 
-    <div class="header">
-      <div class="brand-left">
-        <img src="assets/logos/antigravity-official.png" class="brand-logo" alt="Antigravity" />
-        <div>
-          <div class="brand-name">ANTIGRAVITY</div>
-          <div class="brand-sub">5-DAY BUILD STORY</div>
+    <div id="safe-zone-guide" class="safe-zone-guide"></div>
+
+    <div class="safe-zone">
+      <!-- TOP SERIES HEADER -->
+      <div class="series-header">
+        <div class="sh-top">
+          <div class="sh-brand">
+            <img src="assets/logos/antigravity-official.png" class="sh-logo" alt="Antigravity" />
+            <span class="sh-series">5 DAYS WITH ANTIGRAVITY</span>
+          </div>
+          <span class="sh-ep-pill">EPISODE 04 / 05</span>
+        </div>
+        <div class="sh-bottom">
+          <div class="sh-title">04 — BEYOND NORMAL DEVELOPMENT</div>
+          <div class="sh-narrator">● RAFI · NARRATOR</div>
         </div>
       </div>
-      <div class="part-pill">PART 4 / 5</div>
-    </div>
 
-    <div class="speaker-wrap">
-      <div class="speaker-pill">● RAFI · VOICE CLONE</div>
-    </div>
-
-    
-    <!-- SCENE 1 -->
-    <div id="scene-1" class="scene">
-      <div class="eyebrow anim-item">DAY 5 · THE BREAKTHROUGH</div>
-      <div class="hero-card anim-card">
-        <div class="stat-big green">$0 / MO</div>
-        <div class="card-title">Zero Cloud Fees for Voiceovers</div>
-        <div class="badge-green anim-pop">100% LOCAL &amp; OFFLINE</div>
+      <!-- THREE.JS 3D STAGE WINDOW -->
+      <div class="three-stage-banner">
+        <span class="three-tag">EXPLORATION · SOSDaR24 & RAILSIM RESEARCH</span>
+        <span class="three-tag">THREE.JS 3D + 2D MOTION</span>
       </div>
-    </div>
 
-    <!-- SCENE 2 -->
-    <div id="scene-2" class="scene">
-      <div class="eyebrow anim-item">STEP 1 · HANDY DICTATION</div>
-      <div class="glass-card anim-card">
-        <div class="kbd-row anim-pop">
-          <span class="kbd">Option</span><span>+</span><span class="kbd">Space</span>
+      <!-- MAIN 2D + 3D SCENES -->
+      <div class="scenes-wrap">
+        
+      <!-- SCENE 1: HOOK -->
+      <div id="scene-1" class="scene">
+        <div class="eyebrow">EPISODE 04 · OPENING HOOK</div>
+        <div class="card hero-card">
+          <div class="light-sweep"></div>
+          <div class="kicker">STARTS WITH A QUESTION</div>
+          <div class="headline-lg">DEVELOPMENT MEETS <span class="txt-cyan">RESEARCH</span></div>
+          <div class="subtext">Not every developer experiment starts with an app.</div>
         </div>
-        <div class="card-title">Handy (Whisper / Parakeet)</div>
-        <div class="stat-mini">Dictate scripts 3× faster—zero cloud uploads</div>
       </div>
-    </div>
 
-    <!-- SCENE 3 -->
-    <div id="scene-3" class="scene">
-      <div class="eyebrow anim-item">STEP 2 · OMNIVOICE CLONING</div>
-      <div class="glass-card anim-card">
-        <div class="stat-big">10 SEC</div>
-        <div class="card-title">k2-fsa / OmniVoice on Mac</div>
-        <div class="stat-mini">Clone any voice locally from a 10-second audio clip</div>
-      </div>
-    </div>
-
-    <!-- SCENE 4 -->
-    <div id="scene-4" class="scene">
-      <div class="eyebrow anim-item">LIVE PROOF</div>
-      <div class="wave-card anim-card">
-        <div class="badge-green">RAFI · 10s VOICE CLONE</div>
-        <div class="wave-bars">
-          <span class="bar"></span><span class="bar"></span><span class="bar"></span>
-          <span class="bar"></span><span class="bar"></span><span class="bar"></span>
-          <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+      <!-- SCENE 2: SOSDaR24 DATASET -->
+      <div id="scene-2" class="scene">
+        <div class="eyebrow">DATASET EXPLORATION · SOSDaR24</div>
+        <div class="card">
+          <div class="headline-md">SOSDaR24 Railway Dataset</div>
+          <svg class="arch-svg" viewBox="0 0 680 160">
+            <rect x="15" y="20" width="200" height="120" rx="16" fill="#F0F9FF" stroke="#0284C7" stroke-width="2.5"/>
+            <text x="115" y="72" text-anchor="middle" fill="#0284C7" font-size="20" font-weight="800">LiDAR Point Cloud</text>
+            <text x="115" y="102" text-anchor="middle" fill="#475569" font-size="14">3D Track Geometry</text>
+            <rect x="240" y="20" width="200" height="120" rx="16" fill="#EFF6FF" stroke="#2563EB" stroke-width="2.5"/>
+            <text x="340" y="72" text-anchor="middle" fill="#0F172A" font-size="20" font-weight="800">Multi-Sensor Data</text>
+            <text x="340" y="102" text-anchor="middle" fill="#475569" font-size="14">RGB + Radar + IMU</text>
+            <rect x="465" y="20" width="200" height="120" rx="16" fill="#F5F3FF" stroke="#7C3AED" stroke-width="2.5"/>
+            <text x="565" y="72" text-anchor="middle" fill="#0F172A" font-size="20" font-weight="800">Reconstruction</text>
+            <text x="565" y="102" text-anchor="middle" fill="#7C3AED" font-size="14" font-weight="700">Synthetic Scenarios</text>
+          </svg>
+          <div class="subtext">Exploring possibilities of generating &amp; reconstructing railway simulation data.</div>
         </div>
-        <div class="card-title">Speaking English Right Now</div>
       </div>
-    </div>
 
-    <!-- SCENE 5 -->
-    <div id="scene-5" class="scene">
-      <div class="eyebrow anim-item">BILINGUAL LOCAL ENGINE</div>
-      <div class="glass-card anim-card">
-        <div class="pipe-row anim-pop">
-          <span class="pipe-pill">English</span>
-          <span class="pipe-arrow">+</span>
-          <span class="pipe-pill">Bangla</span>
+      <!-- SCENE 3: RAILSIM CONCEPT & CARLA -->
+      <div id="scene-3" class="scene">
+        <div class="eyebrow">CONCEPT · RAILSIM DATASET GENERATOR</div>
+        <div class="term-window">
+          <div class="term-header">
+            <span class="tdot r"></span><span class="tdot y"></span><span class="tdot g"></span>
+            <span class="term-title">railsim-research-spec.md</span>
+          </div>
+          <div class="term-body">
+            <div class="tline cyan"># RailSim Environment Exploration</div>
+            <div class="tline">• Simulator: CARLA Unreal Engine Pipeline</div>
+            <div class="tline">• OS Target: Ubuntu 22.04 LTS</div>
+            <div class="tline ok">• Compute: Dedicated GPU VRAM &amp; Raycasting</div>
+          </div>
         </div>
-        <div class="card-title">100% Offline · $0 API Bills</div>
-        <div class="stat-mini">Rafi · Sara · Riya finalized in one local pipeline</div>
+        <div class="pill-row">
+          <span class="tech-pill blue">CARLA Exploration</span>
+          <span class="tech-pill cyan">Ubuntu 22.04</span>
+          <span class="tech-pill violet">GPU Requirements</span>
+        </div>
       </div>
-    </div>
 
-    <!-- SCENE 6 -->
-    <div id="scene-6" class="scene">
-      <div class="eyebrow anim-item">FINAL PART NEXT</div>
-      <div class="cta-card anim-card">
-        <div class="cta-tag">FINALE · PART 5 / 5</div>
-        <div class="cta-title">The Complete 5-Day Blueprint</div>
-        <div class="cta-sub">Everything we built + how to start today</div>
-        <div class="cta-btn anim-pop">WATCH PART 5 →</div>
+      <!-- SCENE 4: RESEARCH PROCESS -->
+      <div id="scene-4" class="scene">
+        <div class="eyebrow">RESEARCH BEFORE IMPLEMENTATION</div>
+        <div class="card">
+          <div class="headline-md">Understanding Before Writing Code</div>
+          <div class="subtext">There was a lot to map out before the first real implementation—and that's what makes research exciting.</div>
+          <div class="pill-row">
+            <span class="tech-pill cyan">Feasibility Study</span>
+            <span class="tech-pill blue">Architecture Planning</span>
+          </div>
+        </div>
       </div>
-    </div>
 
+      <!-- SCENE 5: HONEST RESEARCH PIPELINE -->
+      <div id="scene-5" class="scene">
+        <div class="eyebrow">PROPOSED RESEARCH PIPELINE</div>
+        <div class="card">
+          <div class="kicker">DISCOVERING WHAT'S POSSIBLE</div>
+          <div class="pipe-grid">
+            <div class="pipe-step"><span>01</span>DATA</div>
+            <div class="pipe-step"><span>02</span>SIMULATION</div>
+            <div class="pipe-step"><span>03</span>GENERATION</div>
+            <div class="pipe-step active"><span>04</span>RECONSTRUCTION</div>
+          </div>
+          <div class="subtext">Mapping the path from raw dataset research to future simulation workflows.</div>
+        </div>
+      </div>
 
-    <div class="caption-wrap">
-      <div id="caption-box" class="caption-box"></div>
-    </div>
+      <!-- SCENE 6: ENDING TEASER -->
+      <div id="scene-6" class="scene">
+        <div class="eyebrow">UP NEXT · EPISODE 05 (FINALE)</div>
+        <div class="card teaser-card">
+          <div class="teaser-badge">SERIES FINALE TEASER</div>
+          <div class="headline-md">Next: Bringing everything together.</div>
+          <div class="subtext">Building my own AI creator workflow with OmniVoice &amp; VidMotionCraft.</div>
+          <div class="cta-pill">05 — AI CREATOR WORKFLOW →</div>
+        </div>
+      </div>
 
-    <div class="progress-track">
-      <div id="progress-fill" class="progress-fill"></div>
+      </div>
+
+      <!-- SUBTITLES & PROGRESS BAR (STRICTLY ABOVE y=1550px) -->
+      <div class="hud-bottom">
+        <div id="caption-box" class="caption-box"></div>
+        <div class="progress-track">
+          <div id="progress-fill" class="progress-fill"></div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
-const WORDS = [{"word": "Day", "start": 0.05, "end": 0.278, "speaker": "Rafi", "line_idx": 0, "group": 0}, {"word": "5", "start": 0.278, "end": 0.43, "speaker": "Rafi", "line_idx": 0, "group": 0}, {"word": "was", "start": 0.43, "end": 0.659, "speaker": "Rafi", "line_idx": 0, "group": 0}, {"word": "the", "start": 0.659, "end": 0.887, "speaker": "Rafi", "line_idx": 0, "group": 0}, {"word": "biggest", "start": 0.887, "end": 1.419, "speaker": "Rafi", "line_idx": 0, "group": 1}, {"word": "breakthrough:", "start": 1.419, "end": 2.332, "speaker": "Rafi", "line_idx": 0, "group": 1}, {"word": "zero", "start": 2.332, "end": 2.636, "speaker": "Rafi", "line_idx": 0, "group": 1}, {"word": "cloud", "start": 2.636, "end": 3.017, "speaker": "Rafi", "line_idx": 0, "group": 1}, {"word": "fees", "start": 3.017, "end": 3.321, "speaker": "Rafi", "line_idx": 0, "group": 2}, {"word": "for", "start": 3.321, "end": 3.549, "speaker": "Rafi", "line_idx": 0, "group": 2}, {"word": "voiceovers.", "start": 3.549, "end": 4.31, "speaker": "Rafi", "line_idx": 0, "group": 2}, {"word": "First", "start": 4.57, "end": 4.986, "speaker": "Rafi", "line_idx": 1, "group": 3}, {"word": "we", "start": 4.986, "end": 5.153, "speaker": "Rafi", "line_idx": 1, "group": 3}, {"word": "paired", "start": 5.153, "end": 5.653, "speaker": "Rafi", "line_idx": 1, "group": 3}, {"word": "Handy,", "start": 5.653, "end": 6.069, "speaker": "Rafi", "line_idx": 1, "group": 3}, {"word": "an", "start": 6.069, "end": 6.236, "speaker": "Rafi", "line_idx": 1, "group": 4}, {"word": "offline", "start": 6.236, "end": 6.819, "speaker": "Rafi", "line_idx": 1, "group": 4}, {"word": "speech-to-text", "start": 6.819, "end": 7.984, "speaker": "Rafi", "line_idx": 1, "group": 4}, {"word": "app,", "start": 7.984, "end": 8.234, "speaker": "Rafi", "line_idx": 1, "group": 4}, {"word": "to", "start": 8.234, "end": 8.401, "speaker": "Rafi", "line_idx": 1, "group": 5}, {"word": "dictate", "start": 8.401, "end": 8.984, "speaker": "Rafi", "line_idx": 1, "group": 5}, {"word": "3×", "start": 8.984, "end": 9.15, "speaker": "Rafi", "line_idx": 1, "group": 5}, {"word": "faster.", "start": 9.15, "end": 9.65, "speaker": "Rafi", "line_idx": 1, "group": 5}, {"word": "Then", "start": 9.91, "end": 10.231, "speaker": "Rafi", "line_idx": 2, "group": 6}, {"word": "we", "start": 10.231, "end": 10.392, "speaker": "Rafi", "line_idx": 2, "group": 6}, {"word": "ran", "start": 10.392, "end": 10.633, "speaker": "Rafi", "line_idx": 2, "group": 6}, {"word": "OmniVoice", "start": 10.633, "end": 11.357, "speaker": "Rafi", "line_idx": 2, "group": 6}, {"word": "locally", "start": 11.357, "end": 11.919, "speaker": "Rafi", "line_idx": 2, "group": 7}, {"word": "on", "start": 11.919, "end": 12.08, "speaker": "Rafi", "line_idx": 2, "group": 7}, {"word": "Mac", "start": 12.08, "end": 12.321, "speaker": "Rafi", "line_idx": 2, "group": 7}, {"word": "to", "start": 12.321, "end": 12.482, "speaker": "Rafi", "line_idx": 2, "group": 7}, {"word": "clone", "start": 12.482, "end": 12.883, "speaker": "Rafi", "line_idx": 2, "group": 8}, {"word": "voices", "start": 12.883, "end": 13.366, "speaker": "Rafi", "line_idx": 2, "group": 8}, {"word": "from", "start": 13.366, "end": 13.687, "speaker": "Rafi", "line_idx": 2, "group": 8}, {"word": "10s", "start": 13.687, "end": 13.928, "speaker": "Rafi", "line_idx": 2, "group": 8}, {"word": "clips.", "start": 13.928, "end": 14.33, "speaker": "Rafi", "line_idx": 2, "group": 9}, {"word": "In", "start": 14.59, "end": 14.777, "speaker": "Rafi", "line_idx": 3, "group": 10}, {"word": "fact,", "start": 14.777, "end": 15.15, "speaker": "Rafi", "line_idx": 3, "group": 10}, {"word": "this", "start": 15.15, "end": 15.524, "speaker": "Rafi", "line_idx": 3, "group": 10}, {"word": "voice", "start": 15.524, "end": 15.991, "speaker": "Rafi", "line_idx": 3, "group": 10}, {"word": "right", "start": 15.991, "end": 16.458, "speaker": "Rafi", "line_idx": 3, "group": 11}, {"word": "now", "start": 16.458, "end": 16.738, "speaker": "Rafi", "line_idx": 3, "group": 11}, {"word": "is", "start": 16.738, "end": 16.925, "speaker": "Rafi", "line_idx": 3, "group": 11}, {"word": "my", "start": 16.925, "end": 17.112, "speaker": "Rafi", "line_idx": 3, "group": 11}, {"word": "own", "start": 17.112, "end": 17.392, "speaker": "Rafi", "line_idx": 3, "group": 12}, {"word": "10s", "start": 17.392, "end": 17.672, "speaker": "Rafi", "line_idx": 3, "group": 12}, {"word": "clone", "start": 17.672, "end": 18.139, "speaker": "Rafi", "line_idx": 3, "group": 12}, {"word": "speaking", "start": 18.139, "end": 18.886, "speaker": "Rafi", "line_idx": 3, "group": 12}, {"word": "English.", "start": 18.886, "end": 19.54, "speaker": "Rafi", "line_idx": 3, "group": 13}, {"word": "Same", "start": 19.8, "end": 20.175, "speaker": "Rafi", "line_idx": 4, "group": 14}, {"word": "model,", "start": 20.175, "end": 20.645, "speaker": "Rafi", "line_idx": 4, "group": 14}, {"word": "English", "start": 20.645, "end": 21.302, "speaker": "Rafi", "line_idx": 4, "group": 14}, {"word": "&", "start": 21.302, "end": 21.49, "speaker": "Rafi", "line_idx": 4, "group": 14}, {"word": "Bangla,", "start": 21.49, "end": 22.053, "speaker": "Rafi", "line_idx": 4, "group": 15}, {"word": "running", "start": 22.053, "end": 22.71, "speaker": "Rafi", "line_idx": 4, "group": 15}, {"word": "100%", "start": 22.71, "end": 23.085, "speaker": "Rafi", "line_idx": 4, "group": 15}, {"word": "offline", "start": 23.085, "end": 23.743, "speaker": "Rafi", "line_idx": 4, "group": 15}, {"word": "with", "start": 23.743, "end": 24.118, "speaker": "Rafi", "line_idx": 4, "group": 16}, {"word": "zero", "start": 24.118, "end": 24.494, "speaker": "Rafi", "line_idx": 4, "group": 16}, {"word": "monthly", "start": 24.494, "end": 25.151, "speaker": "Rafi", "line_idx": 4, "group": 16}, {"word": "bills.", "start": 25.151, "end": 25.62, "speaker": "Rafi", "line_idx": 4, "group": 16}, {"word": "In", "start": 25.88, "end": 26.037, "speaker": "Rafi", "line_idx": 5, "group": 17}, {"word": "Part", "start": 26.037, "end": 26.351, "speaker": "Rafi", "line_idx": 5, "group": 17}, {"word": "5,", "start": 26.351, "end": 26.508, "speaker": "Rafi", "line_idx": 5, "group": 17}, {"word": "I", "start": 26.508, "end": 26.665, "speaker": "Rafi", "line_idx": 5, "group": 17}, {"word": "will", "start": 26.665, "end": 26.979, "speaker": "Rafi", "line_idx": 5, "group": 18}, {"word": "share", "start": 26.979, "end": 27.371, "speaker": "Rafi", "line_idx": 5, "group": 18}, {"word": "the", "start": 27.371, "end": 27.607, "speaker": "Rafi", "line_idx": 5, "group": 18}, {"word": "full", "start": 27.607, "end": 27.921, "speaker": "Rafi", "line_idx": 5, "group": 18}, {"word": "5-day", "start": 27.921, "end": 28.313, "speaker": "Rafi", "line_idx": 5, "group": 19}, {"word": "blueprint", "start": 28.313, "end": 29.02, "speaker": "Rafi", "line_idx": 5, "group": 19}, {"word": "so", "start": 29.02, "end": 29.177, "speaker": "Rafi", "line_idx": 5, "group": 19}, {"word": "you", "start": 29.177, "end": 29.412, "speaker": "Rafi", "line_idx": 5, "group": 19}, {"word": "can", "start": 29.412, "end": 29.648, "speaker": "Rafi", "line_idx": 5, "group": 20}, {"word": "build", "start": 29.648, "end": 30.04, "speaker": "Rafi", "line_idx": 5, "group": 20}, {"word": "this", "start": 30.04, "end": 30.354, "speaker": "Rafi", "line_idx": 5, "group": 20}, {"word": "too.", "start": 30.354, "end": 30.59, "speaker": "Rafi", "line_idx": 5, "group": 20}];
-const TOTAL_DUR = 31.04;
+if (window.location.search.includes('safezone=1')) {
+  document.getElementById('safe-zone-guide').style.display = 'block';
+}
+
+const PART_NUM = 4;
+const WORDS = [{"word": "Not", "start": 0.05, "end": 0.242, "speaker": "Rafi", "line_idx": 0, "group": 0}, {"word": "every", "start": 0.242, "end": 0.563, "speaker": "Rafi", "line_idx": 0, "group": 0}, {"word": "developer", "start": 0.563, "end": 1.139, "speaker": "Rafi", "line_idx": 0, "group": 0}, {"word": "experiment", "start": 1.139, "end": 1.78, "speaker": "Rafi", "line_idx": 0, "group": 0}, {"word": "starts", "start": 1.78, "end": 2.164, "speaker": "Rafi", "line_idx": 0, "group": 1}, {"word": "with", "start": 2.164, "end": 2.421, "speaker": "Rafi", "line_idx": 0, "group": 1}, {"word": "an", "start": 2.421, "end": 2.549, "speaker": "Rafi", "line_idx": 0, "group": 1}, {"word": "app.", "start": 2.549, "end": 2.741, "speaker": "Rafi", "line_idx": 0, "group": 1}, {"word": "Sometimes,", "start": 2.741, "end": 3.318, "speaker": "Rafi", "line_idx": 0, "group": 2}, {"word": "it", "start": 3.318, "end": 3.446, "speaker": "Rafi", "line_idx": 0, "group": 2}, {"word": "starts", "start": 3.446, "end": 3.83, "speaker": "Rafi", "line_idx": 0, "group": 2}, {"word": "with", "start": 3.83, "end": 4.087, "speaker": "Rafi", "line_idx": 0, "group": 2}, {"word": "a", "start": 4.087, "end": 4.215, "speaker": "Rafi", "line_idx": 0, "group": 3}, {"word": "research", "start": 4.215, "end": 4.727, "speaker": "Rafi", "line_idx": 0, "group": 3}, {"word": "question.", "start": 4.727, "end": 5.24, "speaker": "Rafi", "line_idx": 0, "group": 3}, {"word": "I", "start": 5.48, "end": 5.682, "speaker": "Rafi", "line_idx": 1, "group": 4}, {"word": "began", "start": 5.682, "end": 6.187, "speaker": "Rafi", "line_idx": 1, "group": 4}, {"word": "exploring", "start": 6.187, "end": 7.096, "speaker": "Rafi", "line_idx": 1, "group": 4}, {"word": "SOSDaR24,", "start": 7.096, "end": 7.905, "speaker": "Rafi", "line_idx": 1, "group": 4}, {"word": "a", "start": 7.905, "end": 8.107, "speaker": "Rafi", "line_idx": 1, "group": 5}, {"word": "railway", "start": 8.107, "end": 8.814, "speaker": "Rafi", "line_idx": 1, "group": 5}, {"word": "dataset,", "start": 8.814, "end": 9.521, "speaker": "Rafi", "line_idx": 1, "group": 5}, {"word": "and", "start": 9.521, "end": 9.824, "speaker": "Rafi", "line_idx": 1, "group": 5}, {"word": "reconstructing", "start": 9.824, "end": 11.238, "speaker": "Rafi", "line_idx": 1, "group": 6}, {"word": "railway", "start": 11.238, "end": 11.946, "speaker": "Rafi", "line_idx": 1, "group": 6}, {"word": "simulation", "start": 11.946, "end": 12.956, "speaker": "Rafi", "line_idx": 1, "group": 6}, {"word": "data.", "start": 12.956, "end": 13.36, "speaker": "Rafi", "line_idx": 1, "group": 6}, {"word": "That", "start": 13.6, "end": 14.147, "speaker": "Rafi", "line_idx": 2, "group": 7}, {"word": "led", "start": 14.147, "end": 14.558, "speaker": "Rafi", "line_idx": 2, "group": 7}, {"word": "to", "start": 14.558, "end": 14.832, "speaker": "Rafi", "line_idx": 2, "group": 7}, {"word": "RailSim", "start": 14.832, "end": 15.789, "speaker": "Rafi", "line_idx": 2, "group": 7}, {"word": "Dataset", "start": 15.789, "end": 16.747, "speaker": "Rafi", "line_idx": 2, "group": 8}, {"word": "Generator—exploring", "start": 16.747, "end": 19.347, "speaker": "Rafi", "line_idx": 2, "group": 8}, {"word": "CARLA,", "start": 19.347, "end": 20.032, "speaker": "Rafi", "line_idx": 2, "group": 8}, {"word": "Ubuntu", "start": 20.032, "end": 20.853, "speaker": "Rafi", "line_idx": 2, "group": 8}, {"word": "22.04,", "start": 20.853, "end": 21.537, "speaker": "Rafi", "line_idx": 2, "group": 9}, {"word": "and", "start": 21.537, "end": 21.947, "speaker": "Rafi", "line_idx": 2, "group": 9}, {"word": "GPU", "start": 21.947, "end": 22.358, "speaker": "Rafi", "line_idx": 2, "group": 9}, {"word": "requirements.", "start": 22.358, "end": 24.0, "speaker": "Rafi", "line_idx": 2, "group": 9}, {"word": "There", "start": 24.24, "end": 24.634, "speaker": "Rafi", "line_idx": 3, "group": 10}, {"word": "was", "start": 24.634, "end": 24.87, "speaker": "Rafi", "line_idx": 3, "group": 10}, {"word": "a", "start": 24.87, "end": 25.027, "speaker": "Rafi", "line_idx": 3, "group": 10}, {"word": "lot", "start": 25.027, "end": 25.263, "speaker": "Rafi", "line_idx": 3, "group": 10}, {"word": "to", "start": 25.263, "end": 25.421, "speaker": "Rafi", "line_idx": 3, "group": 11}, {"word": "understand", "start": 25.421, "end": 26.208, "speaker": "Rafi", "line_idx": 3, "group": 11}, {"word": "before", "start": 26.208, "end": 26.68, "speaker": "Rafi", "line_idx": 3, "group": 11}, {"word": "writing", "start": 26.68, "end": 27.231, "speaker": "Rafi", "line_idx": 3, "group": 11}, {"word": "code—but", "start": 27.231, "end": 27.86, "speaker": "Rafi", "line_idx": 3, "group": 12}, {"word": "that's", "start": 27.86, "end": 28.332, "speaker": "Rafi", "line_idx": 3, "group": 12}, {"word": "what", "start": 28.332, "end": 28.647, "speaker": "Rafi", "line_idx": 3, "group": 12}, {"word": "makes", "start": 28.647, "end": 29.041, "speaker": "Rafi", "line_idx": 3, "group": 12}, {"word": "research", "start": 29.041, "end": 29.67, "speaker": "Rafi", "line_idx": 3, "group": 13}, {"word": "exciting.", "start": 29.67, "end": 30.3, "speaker": "Rafi", "line_idx": 3, "group": 13}, {"word": "You", "start": 30.54, "end": 30.784, "speaker": "Rafi", "line_idx": 4, "group": 14}, {"word": "don't", "start": 30.784, "end": 31.19, "speaker": "Rafi", "line_idx": 4, "group": 14}, {"word": "always", "start": 31.19, "end": 31.678, "speaker": "Rafi", "line_idx": 4, "group": 14}, {"word": "know", "start": 31.678, "end": 32.003, "speaker": "Rafi", "line_idx": 4, "group": 14}, {"word": "the", "start": 32.003, "end": 32.246, "speaker": "Rafi", "line_idx": 4, "group": 15}, {"word": "final", "start": 32.246, "end": 32.653, "speaker": "Rafi", "line_idx": 4, "group": 15}, {"word": "answer—the", "start": 32.653, "end": 33.465, "speaker": "Rafi", "line_idx": 4, "group": 15}, {"word": "most", "start": 33.465, "end": 33.79, "speaker": "Rafi", "line_idx": 4, "group": 15}, {"word": "important", "start": 33.79, "end": 34.521, "speaker": "Rafi", "line_idx": 4, "group": 16}, {"word": "step", "start": 34.521, "end": 34.846, "speaker": "Rafi", "line_idx": 4, "group": 16}, {"word": "is", "start": 34.846, "end": 35.009, "speaker": "Rafi", "line_idx": 4, "group": 16}, {"word": "discovering", "start": 35.009, "end": 35.903, "speaker": "Rafi", "line_idx": 4, "group": 16}, {"word": "what's", "start": 35.903, "end": 36.39, "speaker": "Rafi", "line_idx": 4, "group": 17}, {"word": "possible.", "start": 36.39, "end": 37.04, "speaker": "Rafi", "line_idx": 4, "group": 17}, {"word": "Now", "start": 37.28, "end": 37.544, "speaker": "Rafi", "line_idx": 5, "group": 18}, {"word": "it", "start": 37.544, "end": 37.721, "speaker": "Rafi", "line_idx": 5, "group": 18}, {"word": "was", "start": 37.721, "end": 37.985, "speaker": "Rafi", "line_idx": 5, "group": 18}, {"word": "time", "start": 37.985, "end": 38.338, "speaker": "Rafi", "line_idx": 5, "group": 18}, {"word": "to", "start": 38.338, "end": 38.514, "speaker": "Rafi", "line_idx": 5, "group": 19}, {"word": "bring", "start": 38.514, "end": 38.955, "speaker": "Rafi", "line_idx": 5, "group": 19}, {"word": "all", "start": 38.955, "end": 39.219, "speaker": "Rafi", "line_idx": 5, "group": 19}, {"word": "these", "start": 39.219, "end": 39.66, "speaker": "Rafi", "line_idx": 5, "group": 19}, {"word": "experiments", "start": 39.66, "end": 40.63, "speaker": "Rafi", "line_idx": 5, "group": 20}, {"word": "together.", "start": 40.63, "end": 41.335, "speaker": "Rafi", "line_idx": 5, "group": 20}, {"word": "Next:", "start": 41.335, "end": 41.688, "speaker": "Rafi", "line_idx": 5, "group": 20}, {"word": "Bringing", "start": 41.688, "end": 42.393, "speaker": "Rafi", "line_idx": 5, "group": 20}, {"word": "everything", "start": 42.393, "end": 43.275, "speaker": "Rafi", "line_idx": 5, "group": 21}, {"word": "together.", "start": 43.275, "end": 43.98, "speaker": "Rafi", "line_idx": 5, "group": 21}];
+const TOTAL_DUR = 44.53;
+const KEYWORDS = new Set([
+  '$5', 'FIVE', 'DAYS', 'ANTIGRAVITY', 'UBUNTU', 'OPENCODE', 'PRODUCTS',
+  'AAYOJON', '3D', 'SAAS', 'ARCHITECTURE', 'APIS', 'DATABASE', 'CLOUD',
+  'AWS', 'DIU', 'DEVOPS', 'SOSDAR24', 'RAILSIM', 'CARLA', 'GPU',
+  'HANDY', 'OMNIVOICE', 'VIDMOTIONCRAFT', 'HYPERFRAMES', 'GSAP', 'AI'
+]);
+
 const capBox = document.getElementById('caption-box');
 const progFill = document.getElementById('progress-fill');
+
+// Deterministic 3D Renderer (Three.js WebGL tuned for Light Theme)
+const canvas = document.getElementById('three-canvas');
+let useWebGL = false;
+let renderer, scene3d, camera3d, mainGroup;
+
+try {
+  if (window.THREE) {
+    renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true, preserveDrawingBuffer: true });
+    renderer.setSize(1080, 1920, false);
+    scene3d = new THREE.Scene();
+    camera3d = new THREE.PerspectiveCamera(45, 1080 / 1920, 0.1, 100);
+    camera3d.position.set(0, 0, 12);
+
+    const amb = new THREE.AmbientLight(0xffffff, 0.9);
+    scene3d.add(amb);
+    const dir = new THREE.DirectionalLight(0x2563eb, 1.5);
+    dir.position.set(5, 8, 10);
+    scene3d.add(dir);
+
+    mainGroup = new THREE.Group();
+    mainGroup.position.set(-0.22, 2.55, 0);
+    scene3d.add(mainGroup);
+
+    const wireMat = new THREE.MeshBasicMaterial({ color: 0x1d4ed8, wireframe: true });
+    const blueMat = new THREE.MeshStandardMaterial({ color: 0x2563eb, roughness: 0.25, metalness: 0.6 });
+    const violetMat = new THREE.MeshStandardMaterial({ color: 0x7c3aed, roughness: 0.25, metalness: 0.6 });
+
+    if (PART_NUM === 1) {
+      const base = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.12, 1.5), blueMat);
+      base.position.y = -0.35;
+      const screen = new THREE.Mesh(new THREE.BoxGeometry(2.2, 1.35, 0.1), wireMat);
+      screen.position.set(0, 0.35, -0.68);
+      screen.rotation.x = -0.15;
+      mainGroup.add(base, screen);
+    } else if (PART_NUM === 2) {
+      const core = new THREE.Mesh(new THREE.IcosahedronGeometry(0.95, 1), wireMat);
+      mainGroup.add(core);
+      for (let i = 0; i < 4; i++) {
+        const node = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.42, 0.42), i % 2 ? blueMat : violetMat);
+        const a = (i / 4) * Math.PI * 2;
+        node.position.set(Math.cos(a) * 1.85, Math.sin(a) * 0.55, Math.sin(a) * 1.2);
+        mainGroup.add(node);
+      }
+    } else if (PART_NUM === 3) {
+      const torus = new THREE.Mesh(new THREE.TorusGeometry(1.35, 0.08, 12, 42), wireMat);
+      torus.rotation.x = 1.1;
+      mainGroup.add(torus);
+      for (let i = 0; i < 6; i++) {
+        const s = new THREE.Mesh(new THREE.OctahedronGeometry(0.28, 0), i % 2 ? blueMat : violetMat);
+        const a = (i / 6) * Math.PI * 2;
+        s.position.set(Math.cos(a) * 1.35, Math.sin(a) * 0.4, Math.sin(a) * 1.35);
+        mainGroup.add(s);
+      }
+    } else if (PART_NUM === 4) {
+      for (let i = -4; i <= 4; i++) {
+        const tie = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.08, 0.18), blueMat);
+        tie.position.set(0, -0.45, i * 0.45);
+        mainGroup.add(tie);
+      }
+      const scan = new THREE.Mesh(new THREE.RingGeometry(0.8, 1.15, 24), wireMat);
+      mainGroup.add(scan);
+    } else {
+      const center = new THREE.Mesh(new THREE.OctahedronGeometry(0.75, 1), wireMat);
+      mainGroup.add(center);
+      for (let i = 0; i < 5; i++) {
+        const card3d = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.72, 0.08), i % 2 ? blueMat : violetMat);
+        const a = (i / 5) * Math.PI * 2;
+        card3d.position.set(Math.cos(a) * 1.8, Math.sin(a) * 0.35, Math.sin(a) * 1.4);
+        mainGroup.add(card3d);
+      }
+    }
+    useWebGL = true;
+  }
+} catch (e) {
+  useWebGL = false;
+}
+
+function render3D(t) {
+  if (useWebGL && renderer && mainGroup) {
+    mainGroup.rotation.y = t * 0.65;
+    mainGroup.rotation.x = Math.sin(t * 0.8) * 0.18;
+    renderer.render(scene3d, camera3d);
+  }
+}
 
 let lastGroup = -1;
 function updateHUD(t) {
   progFill.style.width = Math.min(100, Math.max(0, (t / TOTAL_DUR) * 100)).toFixed(2) + '%';
+  render3D(t);
 
   let activeWord = null;
   for (let i = 0; i < WORDS.length; i++) {
@@ -457,7 +981,8 @@ function updateHUD(t) {
     capBox.innerHTML = '';
     grpWords.forEach((w) => {
       const el = document.createElement('span');
-      el.className = 'cap-word';
+      const clean = w.word.replace(/[^a-zA-Z0-9$]/g, '').toUpperCase();
+      el.className = 'cap-word' + (KEYWORDS.has(clean) ? ' kw' : '');
       el.textContent = w.word;
       capBox.appendChild(el);
     });
@@ -468,8 +993,10 @@ function updateHUD(t) {
     const w = grpWords[i];
     const el = children[i];
     if (!el) continue;
+    const clean = w.word.replace(/[^a-zA-Z0-9$]/g, '').toUpperCase();
+    const isKw = KEYWORDS.has(clean);
     const isCurrent = (t >= w.start && t <= w.end + 0.08);
-    el.className = 'cap-word' + (isCurrent ? ' active' : '');
+    el.className = 'cap-word' + (isKw ? ' kw' : '') + (isCurrent ? ' active' : '');
   }
 }
 
@@ -478,33 +1005,22 @@ const tl = gsap.timeline({
   onUpdate: function() { updateHUD(this.time()); }
 });
 
-// Subtle ambient orb drift
-tl.to('.orb-1', { x: -45, y: 35, duration: TOTAL_DUR, ease: 'sine.inOut' }, 0);
-tl.to('.orb-2', { x: 45, y: -35, duration: TOTAL_DUR, ease: 'sine.inOut' }, 0);
-
 const scenes = ['#scene-1', '#scene-2', '#scene-3', '#scene-4', '#scene-5', '#scene-6'];
-const times = [0.0, 4.52, 9.86, 14.54, 19.75, 25.83];
+const times = [0.0, 5.43, 13.55, 24.19, 30.49, 37.23];
 
 scenes.forEach((sel, i) => {
   const tStart = times[i];
-  const rotY = (i % 2 === 0) ? -10 : 10;
   tl.fromTo(
     sel,
-    { opacity: 0, y: 48, z: -120, rotateX: 8, rotateY: rotY, scale: 0.94 },
-    { opacity: 1, y: 0, z: 0, rotateX: 0, rotateY: 0, scale: 1, duration: 0.45, ease: 'power3.out' },
+    { opacity: 0, y: 34, scale: 0.96 },
+    { opacity: 1, y: 0, scale: 1, duration: 0.42, ease: 'power3.out' },
     tStart
-  );
-  tl.fromTo(
-    sel + ' .anim-pop',
-    { scale: 0.82, opacity: 0 },
-    { scale: 1, opacity: 1, duration: 0.36, stagger: 0.08, ease: 'back.out(1.7)' },
-    tStart + 0.14
   );
   if (i < scenes.length - 1) {
     tl.to(
       sel,
-      { opacity: 0, y: -36, z: 60, rotateX: -6, duration: 0.28, ease: 'power2.in' },
-      times[i + 1] - 0.16
+      { opacity: 0, y: -26, scale: 0.98, duration: 0.26, ease: 'power2.in' },
+      times[i + 1] - 0.14
     );
   }
 });
@@ -513,7 +1029,7 @@ tl.to({}, { duration: 0.1 }, TOTAL_DUR);
 updateHUD(0);
 
 window.__timelines = window.__timelines || {};
-window.__timelines["antigravity-story-part4-en"] = tl;
+window.__timelines["story-part4-en"] = tl;
 </script>
 </body>
 </html>

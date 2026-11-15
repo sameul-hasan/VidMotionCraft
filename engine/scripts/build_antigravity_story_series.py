@@ -19,28 +19,28 @@ PARTS = {
         "prefix": "story_part1_en",
         "lines": [
             {
-                "tts_text": "Five days ago, I unlocked Antigravity for just five dollars a month using the student offer.",
-                "caption_text": "5 days ago, I unlocked Antigravity for just $5/mo using the Student Offer.",
+                "tts_text": "What if just five dollars could open the door to a completely different way of building software? I wanted to find out.",
+                "caption_text": "What if just $5 could open a completely different way of building software? I wanted to find out.",
             },
             {
-                "tts_text": "Normally it costs twenty dollars, so that is seventy five percent off with a student email.",
-                "caption_text": "Normally $20/mo—that is 75% off with a verified student email.",
+                "tts_text": "It started with the Antigravity Student Offer. But I didn't want to stop at getting access. I wanted to explore what I could actually build with it.",
+                "caption_text": "It started with the Antigravity Student Offer—exploring what I could actually build with it.",
             },
             {
-                "tts_text": "I wanted to test if one five dollar AI workspace could replace an entire production studio.",
-                "caption_text": "I wanted to test if one $5 AI workspace could replace a full studio.",
+                "tts_text": "So, I started setting up my development environment, exploring Ubuntu, working with terminals, configuring AI models, and experimenting with OpenCode.",
+                "caption_text": "Setting up my environment: exploring Ubuntu, terminals, AI models, and OpenCode.",
             },
             {
-                "tts_text": "On day one, I typed a single prompt, and Antigravity built a 3D motion graphics engine from scratch.",
-                "caption_text": "On Day 1, one prompt built a 3D motion-graphics engine from scratch.",
+                "tts_text": "Every setup, every command, every experiment taught me something new. And this was just the beginning.",
+                "caption_text": "Every setup, command, and experiment taught me something new. And this was just the beginning.",
             },
             {
-                "tts_text": "No After Effects, no templates, just HTML, GSAP, and Chrome rendering full 1080p reels.",
-                "caption_text": "No After Effects, no templates—just HTML, GSAP, and Chrome rendering 1080p reels.",
+                "tts_text": "Because the next challenge wasn't about installing tools. It was about turning ideas into actual products.",
+                "caption_text": "Because the next challenge wasn't installing tools—it was turning ideas into actual products.",
             },
             {
-                "tts_text": "That was only day one. Follow for part two to see what we built next.",
-                "caption_text": "That was only Day 1. Follow for Part 2 to see what we built next.",
+                "tts_text": "Next: What happens when ideas become real products?",
+                "caption_text": "Next: What happens when ideas become real products?",
             },
         ],
     },
@@ -48,28 +48,28 @@ PARTS = {
         "prefix": "story_part2_en",
         "lines": [
             {
-                "tts_text": "Day two of building everything with the five dollar Antigravity student offer.",
-                "caption_text": "Day 2 of building everything with the $5 Antigravity Student Offer.",
+                "tts_text": "Having powerful AI tools is exciting. But here's the real question: can you turn an idea into something people can actually use?",
+                "caption_text": "Having powerful AI tools is exciting—but can you turn an idea into something people actually use?",
             },
             {
-                "tts_text": "Instead of guessing edits, I gave Antigravity real viral reels to analyze.",
-                "caption_text": "Instead of guessing edits, I gave Antigravity real viral reels to analyze.",
+                "tts_text": "That's where things got interesting. I started exploring Aayojon three D and working through the concept of an event management SaaS platform.",
+                "caption_text": "I started exploring Aayojon 3D and working through an event management SaaS platform.",
             },
             {
-                "tts_text": "Using y t d l p and f f probe, it measured pacing, color tone, and scene cuts automatically.",
-                "caption_text": "Using yt-dlp and ffprobe, it measured pacing, color tone, and scene cuts.",
+                "tts_text": "Not just the interface. The bigger picture. Product requirements, system architecture, A P Is, database design, and user experience.",
+                "caption_text": "Not just the interface—product requirements, system architecture, APIs, database design, and UX.",
             },
             {
-                "tts_text": "Then it pulled official tech logos, layered real sound effects, and shipped our Aayojon 3D product reels.",
-                "caption_text": "Then it pulled official logos, layered real SFX, and shipped Aayojon 3D reels.",
+                "tts_text": "I began breaking big ideas into smaller, buildable pieces. Because a professional product isn't just about how it looks.",
+                "caption_text": "Breaking big ideas into buildable pieces—because a product isn't just about how it looks.",
             },
             {
-                "tts_text": "We even generated a full behind the scenes breakdown showing the exact code and timeline.",
-                "caption_text": "We even generated a full behind-the-scenes breakdown with code and timelines.",
+                "tts_text": "It's about how everything works together. And then, my attention shifted from building products to something much bigger: the cloud.",
+                "caption_text": "It's about how everything works together. Then my attention shifted to something bigger: the cloud.",
             },
             {
-                "tts_text": "Next up in part three: how we took this engine live for an entire university tech event.",
-                "caption_text": "Next in Part 3: taking this engine live for a university tech event.",
+                "tts_text": "Next: Taking development beyond the local machine.",
+                "caption_text": "Next: Taking development beyond the local machine.",
             },
         ],
     },
@@ -77,28 +77,28 @@ PARTS = {
         "prefix": "story_part3_en",
         "lines": [
             {
-                "tts_text": "Day three and four: could this five dollar AI setup handle real client and community promos?",
-                "caption_text": "Days 3 & 4: could this $5 AI setup handle real community promos?",
+                "tts_text": "Building software is one thing. But making technology accessible, scalable, and useful is another.",
+                "caption_text": "Building software is one thing. Making technology accessible, scalable, and useful is another.",
             },
             {
-                "tts_text": "We had an upcoming A W S Student Build and Grow event at Daffodil International University.",
-                "caption_text": "We had an upcoming AWS Student Build & Grow event at DIU.",
+                "tts_text": "During these days, I also explored the world of A W S and cloud technology.",
+                "caption_text": "During these days, I also explored the world of AWS and cloud technology.",
             },
             {
-                "tts_text": "Antigravity gathered the official A W S and club badges, built 3D perspective cards, and synced every beat.",
-                "caption_text": "Antigravity pulled official AWS & club badges, built 3D cards, and synced every beat.",
+                "tts_text": "I worked on promotional content for A W S Student Build and Grow at D I U, focusing on cloud computing, DevOps, and opportunities for students to get involved.",
+                "caption_text": "Creating promos for AWS Student Build & Grow at DIU—cloud computing, DevOps, and student opportunities.",
             },
             {
-                "tts_text": "Every single transition, sound hit, and word-by-word caption was compiled into code in minutes.",
-                "caption_text": "Every transition, sound hit, and word-by-word caption was compiled in minutes.",
+                "tts_text": "It reminded me of something important. Technology becomes more powerful when knowledge is shared and communities grow together.",
+                "caption_text": "Technology becomes more powerful when knowledge is shared and communities grow together.",
             },
             {
-                "tts_text": "What usually takes a motion designer days of keyframing became a repeatable automated workflow.",
-                "caption_text": "Days of manual keyframing became a repeatable automated workflow.",
+                "tts_text": "From local development environments to cloud infrastructure, I was beginning to see a much bigger picture. But my next experiment would take me somewhere unexpected.",
+                "caption_text": "From local environments to cloud infrastructure—my next experiment took me somewhere unexpected.",
             },
             {
-                "tts_text": "But there was still one paid bottleneck left: voiceovers. That changed on day five.",
-                "caption_text": "One paid bottleneck remained: voiceovers. That changed on Day 5.",
+                "tts_text": "Into research, datasets, and railway simulation. Next: What if software development meets the real world?",
+                "caption_text": "Into research, datasets, and railway simulation. What if development meets the real world?",
             },
         ],
     },
@@ -106,28 +106,28 @@ PARTS = {
         "prefix": "story_part4_en",
         "lines": [
             {
-                "tts_text": "Day five was the biggest breakthrough of the whole week: zero cloud fees for voice.",
-                "caption_text": "Day 5 was the biggest breakthrough: zero cloud fees for voiceovers.",
+                "tts_text": "Not every developer experiment starts with an app. Sometimes, it starts with a research question.",
+                "caption_text": "Not every developer experiment starts with an app. Sometimes, it starts with a research question.",
             },
             {
-                "tts_text": "First we paired Handy, a free offline speech to text app, to dictate scripts three times faster.",
-                "caption_text": "First we paired Handy, an offline speech-to-text app, to dictate 3× faster.",
+                "tts_text": "I began exploring S O S DaR twenty four, a railway-related dataset, and the possibilities of generating and reconstructing railway simulation data.",
+                "caption_text": "I began exploring SOSDaR24, a railway dataset, and reconstructing railway simulation data.",
             },
             {
-                "tts_text": "Then we set up OmniVoice locally on Mac to clone voices from just ten second clips.",
-                "caption_text": "Then we ran OmniVoice locally on Mac to clone voices from 10s clips.",
+                "tts_text": "That led me toward a bigger idea: RailSim Dataset Generator. I started exploring CARLA, Ubuntu twenty two point oh four, G P U requirements, and how a simulation-based workflow could come together.",
+                "caption_text": "That led to RailSim Dataset Generator—exploring CARLA, Ubuntu 22.04, and GPU requirements.",
             },
             {
-                "tts_text": "In fact, the voice you are listening to right now is my own ten second clone speaking English.",
-                "caption_text": "In fact, this voice right now is my own 10s clone speaking English.",
+                "tts_text": "There was a lot to understand before writing the first real implementation. But that's what makes research exciting.",
+                "caption_text": "There was a lot to understand before writing code—but that's what makes research exciting.",
             },
             {
-                "tts_text": "Same voice model, both English and Bangla, running 100 percent offline with zero monthly API bills.",
-                "caption_text": "Same model, English & Bangla, running 100% offline with zero monthly bills.",
+                "tts_text": "You don't always know the final answer when you begin. Sometimes, the most important step is discovering what's possible.",
+                "caption_text": "You don't always know the final answer—the most important step is discovering what's possible.",
             },
             {
-                "tts_text": "In the final part five, I will show you the full five day blueprint so you can build this too.",
-                "caption_text": "In Part 5, I will share the full 5-day blueprint so you can build this too.",
+                "tts_text": "And now, it was time to bring all these experiments together into one creative workflow. Next: Bringing everything together.",
+                "caption_text": "Now it was time to bring all these experiments together. Next: Bringing everything together.",
             },
         ],
     },
@@ -135,28 +135,28 @@ PARTS = {
         "prefix": "story_part5_en",
         "lines": [
             {
-                "tts_text": "Five days, one five dollar Antigravity student plan, and here is everything we built.",
-                "caption_text": "5 days, one $5 Antigravity Student plan—here is everything we built.",
+                "tts_text": "Five days. So many experiments. And one final question. What if I could build my own creative workflow?",
+                "caption_text": "Five days. Countless experiments. What if I could build my own AI creative workflow?",
             },
             {
-                "tts_text": "A 3D HyperFrames animation engine, automated viral reference analysis, and real layered sound design.",
-                "caption_text": "A 3D HyperFrames engine, automated reference analysis, and layered sound design.",
+                "tts_text": "I explored Handy for voice dictation and OmniVoice for local voice synthesis. I experimented with custom voice profiles and started bringing everything together with VidMotionCraft.",
+                "caption_text": "Exploring Handy dictation, OmniVoice local synthesis, and bringing it together with VidMotionCraft.",
             },
             {
-                "tts_text": "Product launch reels, university event promos, and local offline voice cloning in two languages.",
-                "caption_text": "Product reels, university event promos, and offline voice cloning in 2 languages.",
+                "tts_text": "H T M L based compositions, G S A P animations, HyperFrames, synchronized captions, sound effects, and automated video rendering. Even this five-part series became part of that experiment.",
+                "caption_text": "HTML compositions, GSAP animations, HyperFrames, synced captions, SFX, and automated rendering.",
             },
             {
-                "tts_text": "All orchestrated inside one AI workspace for less than the price of a single coffee.",
-                "caption_text": "All orchestrated in one AI workspace for less than a single coffee.",
+                "tts_text": "Instead of simply using AI to create content, I wanted to understand the workflow behind creating it. And that's what these five days were really about.",
+                "caption_text": "Instead of just using AI, I wanted to build the workflow behind it.",
             },
             {
-                "tts_text": "If you are a student, do not sleep on the five dollar Antigravity offer.",
-                "caption_text": "If you are a student, do not sleep on the $5 Antigravity offer.",
+                "tts_text": "AI doesn't replace developers. It gives developers new ways to think, create, and build. This is what happens when students stop waiting for the future and start building it.",
+                "caption_text": "AI doesn't replace developers—it gives developers new ways to think, create, and build.",
             },
             {
-                "tts_text": "Comment STUDENT below and I will send you our complete workflow and setup guide.",
-                "caption_text": "Comment STUDENT below and I will send you our complete workflow & guide.",
+                "tts_text": "And this is only the beginning. Follow along. There's much more to build.",
+                "caption_text": "This is only the beginning. Follow the journey—there's much more to build.",
             },
         ],
     },
@@ -229,7 +229,7 @@ def main():
         all_words = []
         spans = []
         current_offset = 0.0
-        gap = 0.16
+        gap = 0.14
 
         for idx, line in enumerate(lines):
             part_wav = os.path.join(AUDIO_DIR, f"_tmp_{prefix}_{idx}.wav")
@@ -242,7 +242,8 @@ def main():
                 speed=1.05,
                 denoise=True,
             )
-            sf.write(part_wav, audios[0], model.sampling_rate)
+            audio_np = audios[0].detach().cpu().numpy() if hasattr(audios[0], "detach") else audios[0]
+            sf.write(part_wav, audio_np.squeeze(), model.sampling_rate)
             dur = get_duration(part_wav)
 
             line_words = align_line_words(line["caption_text"], idx, current_offset, dur)
